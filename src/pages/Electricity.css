@@ -1,0 +1,538 @@
+.electricity-page {
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  color: #333;
+  margin: 0 0 8px 0;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.page-header p {
+  color: #666;
+  margin: 0;
+  font-size: 16px;
+}
+
+.error-banner {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideDown 0.3s ease-out;
+}
+
+.error-banner p {
+  margin: 0;
+  font-size: 14px;
+  flex: 1;
+}
+
+.error-banner button {
+  background: none;
+  border: none;
+  color: #721c24;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.step-indicator .step {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e1e5e9;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.step-indicator .step.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.electricity-form {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  animation: slideDown 0.3s ease-out;
+}
+
+.electricity-step {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.step-header h2 {
+  color: #333;
+  margin: 0 0 8px 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.step-header p {
+  color: #666;
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Step 1: DISCO Selection */
+.disco-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.disco-card {
+  background: white;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.disco-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+  transform: translateY(-2px);
+}
+
+.disco-card.active {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.25);
+  border-width: 2px;
+}
+
+.disco-icon {
+  font-size: 32px;
+}
+
+.disco-info h4 {
+  margin: 0 0 4px 0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.disco-state {
+  margin: 0;
+  color: #999;
+  font-size: 12px;
+}
+
+/* Step 2 & 3: Form Groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.form-group small {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.disco-display {
+  background: #f8f9fa;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.disco-display .disco-icon {
+  font-size: 24px;
+}
+
+.disco-display .disco-name {
+  font-size: 14px;
+}
+
+.info-box {
+  background: #f0f4ff;
+  border: 1px solid #d1d9f2;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.info-box p {
+  margin: 6px 0;
+  color: #333;
+}
+
+.info-box p strong {
+  color: #667eea;
+}
+
+.info-box.warning {
+  background: #fff9e6;
+  border-color: #ffe1a1;
+  color: #856404;
+}
+
+.info-box.warning strong {
+  color: #856404;
+}
+
+/* Step 4: Summary Card */
+.summary-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #e1e5e9;
+  font-size: 14px;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-row .label {
+  font-weight: 600;
+  color: #666;
+}
+
+.summary-row .value {
+  color: #333;
+  font-weight: 500;
+  text-align: right;
+}
+
+.summary-row .value.amount {
+  color: #667eea;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Meter Type Selection */
+.meter-type-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.meter-type-option {
+  flex: 1;
+}
+
+.meter-type-option input {
+  display: none;
+}
+
+.meter-type-option label {
+  display: block;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.meter-type-option input:checked + label {
+  border-color: #667eea;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  color: #667eea;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn.primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn.secondary {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.btn.secondary:hover:not(:disabled) {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Mobile Responsive - 480px */
+@media (max-width: 480px) {
+  .electricity-page {
+    padding: 12px;
+  }
+
+  .electricity-form {
+    padding: 16px;
+  }
+
+  .disco-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .disco-card {
+    padding: 12px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: auto;
+    padding: 14px 16px;
+  }
+
+  .step-indicator {
+    gap: 10px;
+  }
+
+  .step-indicator .step {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .page-header h1 {
+    font-size: 22px;
+  }
+
+  .step-header h2 {
+    font-size: 18px;
+  }
+
+  .summary-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .summary-row .value {
+    text-align: left;
+  }
+
+  .meter-type-group {
+    flex-direction: column;
+  }
+
+  .meter-type-option label {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
+
+/* Tablet Responsive - 768px */
+@media (max-width: 768px) {
+  .electricity-page {
+    padding: 15px;
+  }
+
+  .electricity-form {
+    padding: 20px;
+  }
+
+  .disco-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .step-indicator {
+    gap: 15px;
+  }
+
+  .step-indicator .step {
+    width: 36px;
+    height: 36px;
+    font-size: 13px;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+  }
+
+  .step-header h2 {
+    font-size: 20px;
+  }
+}
+
+/* Desktop Responsive - 1200px+ */
+@media (min-width: 1200px) {
+  .electricity-page {
+    padding: 30px;
+  }
+
+  .electricity-form {
+    padding: 40px;
+  }
+
+  .disco-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .form-actions {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .btn {
+    min-width: 180px;
+  }
+}
