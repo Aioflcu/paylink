@@ -83,9 +83,16 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Header */}
       <header className="dashboard-header">
-        <div className="header-left">
+        <div className="header-inner">
+          <div className="header-left">
+          <button
+            className="hamburger-btn"
+            onClick={() => setMenuOpen(!menuOpen)}
+            title="Menu"
+          >
+            ☰
+          </button>
           <div
             className="avatar-badge"
             onClick={() => navigate('/profile')}
@@ -99,23 +106,17 @@ const Dashboard = () => {
             <p className="user-name">{userData?.fullName || 'User'}</p>
             <p className="user-email">{currentUser?.email}</p>
           </div>
-        </div>
+          </div>
 
-        <div className="header-right">
+          <div className="header-right">
           <button
-            className="header-btn"
+            className="header-btn history-btn"
             onClick={() => navigate('/transactions')}
-            title="View transactions"
+            title="History"
           >
             📋 History
           </button>
-          <button
-            className="hamburger-btn"
-            onClick={() => setMenuOpen(!menuOpen)}
-            title="Menu"
-          >
-            ☰
-          </button>
+          </div>
         </div>
       </header>
 
@@ -135,46 +136,49 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <main className="dashboard-main">
-        {/* Wallet Section */}
-        <section className="wallet-section">
-          <div className="wallet-card">
-            <div className="wallet-header">
-              <h2>Your Wallet</h2>
-              <button
-                className="eye-icon"
-                onClick={() => setShowBalance(!showBalance)}
-                title={showBalance ? 'Hide balance' : 'Show balance'}
-              >
-                {showBalance ? '�️' : '👁️‍�️'}
-              </button>
-            </div>
+          {/* Wallet Section - Seamless */}
+          <div className="wallet-section-seamless">
+            <div className="wallet-strip">
+              <div className="wallet-left stacked">
+                <div className="balance-display compact">
+                  <span className="currency">₦</span>
+                  <span className="amount">
+                    {showBalance ? walletBalance.toLocaleString() : '••••••'}
+                  </span>
+                  <button
+                    className="eye-icon"
+                    onClick={() => setShowBalance(!showBalance)}
+                    title={showBalance ? 'Hide balance' : 'Show balance'}
+                  >
+                    {showBalance ? '👁️' : '👁️‍🗨️'}
+                  </button>
+                </div>
 
-            <div className="balance-display">
-              <p className="balance-label">Current Balance</p>
-              <div className="balance-amount">
-                <span className="currency">₦</span>
-                <span className="amount">
-                  {showBalance ? walletBalance.toLocaleString() : '••••••'}
-                </span>
+                <div className="wallet-actions-vertical">
+                  <button
+                    className="action-btn topup"
+                    onClick={() => navigate('/wallet')}
+                    title="Top up"
+                  >
+                    <span className="btn-icon">➕</span>
+                    <span className="btn-label">Top up</span>
+                  </button>
+                  <button
+                    className="action-btn withdraw"
+                    onClick={() => navigate('/wallet')}
+                    title="Withdraw"
+                  >
+                    <span className="btn-icon">⬆️</span>
+                    <span className="btn-label">Withdraw</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="wallet-right">
+                {/* reserved for shortcuts or quick actions on the right */}
               </div>
             </div>
-
-            <div className="wallet-actions">
-              <button
-                className="wallet-btn fund-btn"
-                onClick={() => navigate('/wallet')}
-              >
-                💳 Fund Wallet
-              </button>
-              <button
-                className="wallet-btn withdraw-btn"
-                onClick={() => navigate('/wallet')}
-              >
-                💸 Withdraw
-              </button>
-            </div>
           </div>
-        </section>
 
         {/* Quick Stats */}
         <section className="quick-stats">

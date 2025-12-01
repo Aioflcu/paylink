@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: paylink-local:latest
+    depends_on:
+      - mongo
+      - redis
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/paylink
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=devsecret
+      - PEYFLEX_BASE_URL=http://example.test
+      - PEYFLEX_API_KEY=changeme
+      - MONNIFY_BASE_URL=http://example.test
+      - MONNIFY_API_KEY=changeme
+      - MONNIFY_SECRET_KEY=changeme
+      - EMAIL_USER=test@example.com
+      - EMAIL_PASS=changeme
+      - FRONTEND_ORIGIN=http://localhost:3000
+    ports:
+      - '5000:5000'
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5000/api/health/liveness || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:

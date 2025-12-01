@@ -43,6 +43,8 @@ try {
   if (Sentry) {
     app.use(Sentry.Handlers.requestHandler());
     console.log('Sentry initialized and request handler attached');
+    // expose Sentry globally for middleware that may capture exceptions
+    try { global.Sentry = Sentry; } catch (e) { /* noop */ }
   }
 } catch (e) {
   console.warn('Sentry init error:', e.message || e);
@@ -56,6 +58,14 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Attach request id middleware so downstream logs and handlers can reference req.id
+try {
+  const requestId = require('./backend/middleware/requestId');
+  app.use(requestId);
+} catch (e) {
+  console.warn('RequestId middleware attach failed', e.message || e);
+}
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -617,6 +627,14 @@ app.use('/api/docs', docsRoutes);
 // Attach Sentry error handler after routes if configured
 if (Sentry && Sentry.Handlers) {
   app.use(Sentry.Handlers.errorHandler());
+}
+
+// Attach centralized error handler (captures to Sentry if configured)
+try {
+  const errorHandler = require('./backend/middleware/errorHandler');
+  app.use(errorHandler);
+} catch (e) {
+  console.warn('Error handler attach failed', e.message || e);
 }
 
 console.log('[Backend] New modular routes mounted:');

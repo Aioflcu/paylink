@@ -1,6 +1,8 @@
 class ReferralService {
   static async generateReferralCode(userId) {
     try {
+      const { db } = await import('../firebase');
+      const { doc, getDoc, setDoc, collection, query, where, getDocs } = await import('firebase/firestore');
 
       // Generate unique referral code
       let referralCode;
@@ -9,8 +11,12 @@ class ReferralService {
 
       while (!isUnique && attempts < 10) {
         referralCode = this.generateCode();
-        const existing = await User.findOne({ referralCode });
-        isUnique = !existing;
+
+        // Check if code already exists
+        const usersRef = collection(db, 'users');
+        const q = query(usersRef, where('referralCode', '==', referralCode));
+        const existing = await getDocs(q);
+        isUnique = existing.empty;
         attempts++;
       }
 
@@ -19,7 +25,15 @@ class ReferralService {
       }
 
       // Update user with referral code
-      await User.findByIdAndUpdate(userId, { referralCode });
+      const userRef = doc(db, 'users', userId);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        await setDoc(userRef, {
+          ...userDoc.data(),
+          referralCode
+        }, { merge: true });
+      }
 
       return referralCode;
     } catch (error) {
@@ -109,10 +123,37 @@ class ReferralService {
 
   static async getReferralStats(userId) {
     try {
+      const { db } = await import('../firebase');
+      const { collection, query, where, orderBy, getDocs } = await import('firebase/firestore');
 
-      const referrals = await Referral.find({ referrerId: userId })
-        .populate('refereeId', 'fullName username createdAt')
-        .sort({ createdAt: -1 });
+      const referralsRef = collection(db, 'referrals');
+      const q = query(referralsRef, where('referrerId', '==', userId), orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
+
+      const referrals = [];
+      for (const docSnap of querySnapshot.docs) {
+        const referralData = docSnap.data();
+
+        // Get referee details
+        const usersRef = collection(db, 'users');
+        const userQuery = query(usersRef, where('__name__', '==', referralData.refereeId));
+        const userDocs = await getDocs(userQuery);
+
+        let refereeInfo = { fullName: 'Unknown', username: 'Unknown', createdAt: null };
+        if (!userDocs.empty) {
+          const userData = userDocs.docs[0].data();
+          refereeInfo = {
+            fullName: userData.fullName || 'Unknown',
+            username: userData.username || 'Unknown',
+            createdAt: userData.createdAt
+          };
+        }
+
+        referrals.push({
+          ...referralData,
+          refereeInfo
+        });
+      }
 
       const totalReferrals = referrals.length;
       const successfulReferrals = referrals.filter(r => r.status === 'completed').length;
@@ -123,9 +164,9 @@ class ReferralService {
         successfulReferrals,
         totalEarnings,
         referrals: referrals.map(r => ({
-          refereeName: r.refereeId?.fullName || 'Unknown',
-          refereeUsername: r.refereeId?.username || 'Unknown',
-          joinedAt: r.refereeId?.createdAt,
+          refereeName: r.refereeInfo.fullName,
+          refereeUsername: r.refereeInfo.username,
+          joinedAt: r.refereeInfo.createdAt,
           status: r.status,
           earnings: r.rewards?.referrer || 0
         }))
@@ -261,16 +302,24 @@ class ReferralService {
 
   static async validateReferralCode(code) {
     try {
-      const user = await User.findOne({ referralCode: code });
+      const { db } = await import('../firebase');
+      const { collection, query, where, getDocs } = await import('firebase/firestore');
 
-      if (!user) {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('referralCode', '==', code));
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
         return { valid: false, error: 'Invalid referral code' };
       }
 
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+
       return {
         valid: true,
-        referrerId: user._id,
-        referrerName: user.fullName
+        referrerId: userDoc.id,
+        referrerName: userData.fullName
       };
     } catch (error) {
       console.error('Error validating referral code:', error);
@@ -341,22 +390,44 @@ class ReferralService {
 
   static async getReferralAnalytics(userId) {
     try {
+      const { db } = await import('../firebase');
+      const { collection, query, where, orderBy, getDocs } = await import('firebase/firestore');
 
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-      const [total, last30Days, last7Days, pending, completed] = await Promise.all([
-        Referral.countDocuments({ referrerId: userId }),
-        Referral.countDocuments({ referrerId: userId, createdAt: { $gte: thirtyDaysAgo } }),
-        Referral.countDocuments({ referrerId: userId, createdAt: { $gte: sevenDaysAgo } }),
-        Referral.countDocuments({ referrerId: userId, status: 'pending' }),
-        Referral.countDocuments({ referrerId: userId, status: 'completed' })
-      ]);
+      const referralsRef = collection(db, 'referrals');
 
-      const totalEarnings = await Referral.aggregate([
-        { $match: { referrerId: require('mongoose').Types.ObjectId(userId), status: 'completed' } },
-        { $group: { _id: null, total: { $sum: '$rewards.referrer' } } }
-      ]);
+      // Get all referrals for counting
+      const allQuery = query(referralsRef, where('referrerId', '==', userId));
+      const allSnapshot = await getDocs(allQuery);
+      const total = allSnapshot.size;
+
+      // Get last 30 days
+      const last30Query = query(referralsRef, where('referrerId', '==', userId), where('createdAt', '>=', thirtyDaysAgo));
+      const last30Snapshot = await getDocs(last30Query);
+      const last30Days = last30Snapshot.size;
+
+      // Get last 7 days
+      const last7Query = query(referralsRef, where('referrerId', '==', userId), where('createdAt', '>=', sevenDaysAgo));
+      const last7Snapshot = await getDocs(last7Query);
+      const last7Days = last7Snapshot.size;
+
+      // Get pending referrals
+      const pendingQuery = query(referralsRef, where('referrerId', '==', userId), where('status', '==', 'pending'));
+      const pendingSnapshot = await getDocs(pendingQuery);
+      const pending = pendingSnapshot.size;
+
+      // Get completed referrals and calculate earnings
+      const completedQuery = query(referralsRef, where('referrerId', '==', userId), where('status', '==', 'completed'));
+      const completedSnapshot = await getDocs(completedQuery);
+      const completed = completedSnapshot.size;
+
+      let totalEarnings = 0;
+      completedSnapshot.forEach(doc => {
+        const data = doc.data();
+        totalEarnings += data.rewards?.referrer || 0;
+      });
 
       return {
         totalReferrals: total,
@@ -364,7 +435,7 @@ class ReferralService {
         last7Days: last7Days,
         pendingReferrals: pending,
         completedReferrals: completed,
-        totalEarnings: totalEarnings[0]?.total || 0,
+        totalEarnings: totalEarnings,
         conversionRate: total > 0 ? (completed / total) * 100 : 0
       };
     } catch (error) {

@@ -77,25 +77,17 @@ class AnalyticsService {
 
       while (currentWeek <= now) {
         const weekEnd = new Date(currentWeek.getTime() + 6 * 24 * 60 * 60 * 1000);
+        const weekTransactions = await Transaction.find({
+          userId,
+          createdAt: { $gte: currentWeek, $lte: weekEnd },
+          type: 'debit'
+        });
 
-        // Query transactions for this week
-        const transactionsRef = query(
-          collection(db, 'transactions'),
-          where('userId', '==', userId),
-          where('type', '==', 'debit'),
-          where('timestamp', '>=', currentWeek),
-          where('timestamp', '<=', weekEnd),
-          orderBy('timestamp', 'asc')
-        );
-
-        const querySnapshot = await getDocs(transactionsRef);
-        const weekTransactions = querySnapshot.docs.map(doc => doc.data());
-
-        const weekTotal = weekTransactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+        const weekTotal = weekTransactions.reduce((sum, t) => sum + t.amount, 0);
 
         weeks.push({
           week: currentWeek.toISOString().split('T')[0],
-          amount: weekTotal / 100, // Convert to Naira
+          amount: weekTotal,
           transactions: weekTransactions.length
         });
 
@@ -179,24 +171,18 @@ class AnalyticsService {
 
       while (currentMonth <= now) {
         const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+        const monthTransactions = await Transaction.find({
+          userId,
+          category,
+          createdAt: { $gte: currentMonth, $lte: monthEnd },
+          type: 'debit'
+        });
 
-        const transactionsRef = query(
-          collection(db, 'transactions'),
-          where('userId', '==', userId),
-          where('category', '==', category),
-          where('timestamp', '>=', currentMonth),
-          where('timestamp', '<=', monthEnd),
-          where('type', '==', 'debit')
-        );
-
-        const querySnapshot = await getDocs(transactionsRef);
-        const monthTransactions = querySnapshot.docs.map(doc => doc.data());
-
-        const monthTotal = monthTransactions.reduce((sum, t) => sum + (t.amount || 0), 0);
+        const monthTotal = monthTransactions.reduce((sum, t) => sum + t.amount, 0);
 
         months.push({
           month: currentMonth.toLocaleString('default', { month: 'short', year: 'numeric' }),
-          amount: monthTotal / 100, // Convert to Naira
+          amount: monthTotal,
           transactions: monthTransactions.length
         });
 

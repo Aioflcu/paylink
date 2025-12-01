@@ -16,11 +16,11 @@ import Data from './pages/Data';
 import Electricity from './pages/Electricity';
 import CableTV from './pages/CableTV';
 import Internet from './pages/Internet';
-import Education from './pages/Education';
 import Insurance from './pages/Insurance';
 import Giftcard from './pages/Giftcard';
 import Tax from './pages/Tax';
 import TransactionPIN from './pages/TransactionPIN';
+import SetPIN from './pages/SetPIN';
 import Success from './pages/Success';
 import Receipts from './pages/Receipts';
 import Analytics from './pages/Analytics';
@@ -40,6 +40,8 @@ import SupportTickets from './pages/SupportTickets';
 import VirtualCard from './pages/VirtualCard';
 import AdminDashboard from './pages/AdminDashboard';
 import DeveloperAPI from './pages/DeveloperAPI';
+import SecuritySettings from './pages/SecuritySettings';
+import DeviceManagement from './pages/DeviceManagement';
 import './App.css';
 
 function App() {
@@ -66,12 +68,14 @@ function App() {
               <Route path="/data" element={<PrivateRoute><Data /></PrivateRoute>} />
               <Route path="/electricity" element={<PrivateRoute><Electricity /></PrivateRoute>} />
               <Route path="/cabletv" element={<PrivateRoute><CableTV /></PrivateRoute>} />
-              <Route path="/internet" element={<PrivateRoute><Internet /></PrivateRoute>} />
-              <Route path="/education" element={<PrivateRoute><Education /></PrivateRoute>} />
+                <Route path="/internet" element={<PrivateRoute><Internet /></PrivateRoute>} />
               <Route path="/insurance" element={<PrivateRoute><Insurance /></PrivateRoute>} />
               <Route path="/giftcard" element={<PrivateRoute><Giftcard /></PrivateRoute>} />
               <Route path="/tax" element={<PrivateRoute><Tax /></PrivateRoute>} />
               <Route path="/pin" element={<PrivateRoute><TransactionPIN /></PrivateRoute>} />
+              <Route path="/set-pin" element={<PrivateRoute><SetPIN /></PrivateRoute>} />
+              <Route path="/security-settings" element={<PrivateRoute><SecuritySettings /></PrivateRoute>} />
+              <Route path="/device-management" element={<PrivateRoute><DeviceManagement /></PrivateRoute>} />
               <Route path="/success" element={<PrivateRoute><Success /></PrivateRoute>} />
               <Route path="/receipts" element={<PrivateRoute><Receipts /></PrivateRoute>} />
               <Route path="/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />

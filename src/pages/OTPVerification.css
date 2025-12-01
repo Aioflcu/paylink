@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   padding: 20px;
 }
 
@@ -47,7 +47,7 @@
 }
 
 .email-display {
-  color: #667eea !important;
+  color: var(--primary-color) !important;
   font-weight: 600;
   word-break: break-all;
 }
@@ -85,8 +85,8 @@
 
 .otp-input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 4px rgba(var(--primary-rgb), 0.08);
 }
 
 .otp-input:disabled {
@@ -105,7 +105,7 @@
 .verify-btn {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -118,7 +118,7 @@
 
 .verify-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 10px 25px rgba(var(--primary-rgb), 0.4);
 }
 
 .verify-btn:disabled {
@@ -144,7 +144,7 @@
 .resend-btn {
   background: none;
   border: none;
-  color: #667eea;
+  color: var(--primary-color);
   cursor: pointer;
   font-weight: 600;
   font-size: 14px;
@@ -154,7 +154,7 @@
 }
 
 .resend-btn:hover:not(:disabled) {
-  color: #764ba2;
+  color: var(--primary-2);
   text-decoration: underline;
 }
 

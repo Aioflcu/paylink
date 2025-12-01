@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import { paymentAPI } from '../services/backendAPI';
 import './Giftcard.css';
 
 const Giftcard = () => {
@@ -36,28 +36,51 @@ const Giftcard = () => {
 
     setLoading(true);
     try {
-      const response = await api.post('/utilities/giftcard', {
-        provider: selectedProvider,
-        amount: parseFloat(amount),
-        recipientEmail,
-        recipientName,
-        message
-      });
+      // Call backend payment API
+      const result = await paymentAPI.buyGiftCard(
+        selectedProvider,
+        parseFloat(amount)
+      );
 
-      navigate('/confirm', {
-        state: {
-          type: 'giftcard',
-          provider: providers.find(p => p.id === selectedProvider),
-          amount: parseFloat(amount),
-          recipientEmail,
-          recipientName,
-          message,
-          transactionId: response.data.transactionId
-        }
-      });
+      if (result.success) {
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'giftcard',
+            provider: providers.find(p => p.id === selectedProvider),
+            amount: parseFloat(amount),
+            recipientEmail,
+            recipientName,
+            message,
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0
+          }
+        });
+      }
     } catch (error) {
-      console.error('Error purchasing giftcard:', error);
-      alert('Failed to purchase giftcard. Please try again.');
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        navigate('/pin', {
+          state: {
+            type: 'giftcard',
+            provider: providers.find(p => p.id === selectedProvider)?.name,
+            amount: parseFloat(amount),
+            description: `Gift Card - ${providers.find(p => p.id === selectedProvider)?.name} - ₦${parseFloat(amount).toLocaleString()}`,
+            onPinVerified: async (pinHash) => {
+              const pinResult = await paymentAPI.buyGiftCard(
+                selectedProvider,
+                parseFloat(amount),
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        alert(error.data?.error || 'Purchase failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

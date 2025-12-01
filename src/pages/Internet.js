@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { paymentAPI } from '../services/backendAPI';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './Internet.css';
 
@@ -125,21 +126,70 @@ const Internet = () => {
     }
   };
 
-  const handleProceedToPin = () => {
+  const handleProceedToPin = async () => {
     const providerObj = getSelectedProviderObject();
     const plan = internetPlans[formData.provider].find((p) => p.id === formData.plan);
 
-    navigate('/pin', {
-      state: {
-        type: 'internet',
-        provider: providerObj?.name,
-        plan: plan?.name,
-        accountNumber: formData.accountNumber,
-        amount: plan?.price,
-        phone: formData.phone,
-        description: `Internet: ${providerObj?.name} - ${plan?.name} (${formData.accountNumber})`,
-      },
-    });
+    try {
+      setLoading(true);
+      setError('');
+
+      // Call backend payment API
+      const result = await paymentAPI.buyInternet(
+        formData.accountNumber,
+        formData.provider,
+        formData.plan,
+        plan?.price
+      );
+
+      if (result.success) {
+        // Navigate to success page
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'internet',
+            provider: providerObj?.name,
+            plan: plan?.name,
+            accountNumber: formData.accountNumber,
+            amount: plan?.price,
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0,
+            description: `Internet: ${providerObj?.name} - ${plan?.name} (${formData.accountNumber})`
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        navigate('/pin', {
+          state: {
+            type: 'internet',
+            provider: providerObj?.name,
+            plan: plan?.name,
+            accountNumber: formData.accountNumber,
+            amount: plan?.price,
+            phone: formData.phone,
+            description: `Internet: ${providerObj?.name} - ${plan?.name} (${formData.accountNumber})`,
+            onPinVerified: async (pinHash) => {
+              const pinResult = await paymentAPI.buyInternet(
+                formData.accountNumber,
+                formData.provider,
+                formData.plan,
+                plan?.price,
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderStep1 = () => (

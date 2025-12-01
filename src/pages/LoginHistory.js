@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import loginInsightsService from '../services/loginInsightsService';
+import { securityAPI } from '../services/backendAPI';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './LoginHistory.css';
 
@@ -28,28 +28,28 @@ const LoginHistory = () => {
 
   // Fetch login data
   useEffect(() => {
-    if (!user?.uid) {
+    if (!currentUser?.uid) {
       navigate('/login');
       return;
     }
     loadLoginData();
-  }, [user?.uid, navigate]);
+  }, [currentUser?.uid, navigate]);
 
   const loadLoginData = async () => {
     try {
       setLoading(true);
       setError('');
 
-      const [loginHistory, devices, lastLog, sessions, suspicious] = await Promise.all([
-        loginInsightsService.getLoginHistory(user.uid, 50),
-        loginInsightsService.getRegisteredDevices(user.uid),
-        loginInsightsService.getLastLogin(user.uid),
-        loginInsightsService.getActiveSessions(user.uid),
-        loginInsightsService.getSuspiciousLogins(user.uid)
+      const [loginHistory, devicesList, lastLog, sessions, suspicious] = await Promise.all([
+        securityAPI.getLoginHistory(currentUser.uid, 50),
+        securityAPI.getDevices(currentUser.uid),
+        securityAPI.getLastLogin(currentUser.uid),
+        securityAPI.getActiveSessions(currentUser.uid),
+        securityAPI.getSuspiciousLogins(currentUser.uid)
       ]);
 
       setLogins(loginHistory || []);
-      setDevices(devices || []);
+      setDevices(devicesList || []);
       setLastLogin(lastLog || null);
       setActiveSessions(sessions || []);
       setSuspiciousLogins(suspicious || []);
@@ -66,7 +66,7 @@ const LoginHistory = () => {
       if (!window.confirm('End this session? You will need to login again.')) return;
 
       setLoading(true);
-      await loginInsightsService.terminateSession(user.uid, sessionId);
+      await securityAPI.terminateSession(currentUser.uid, sessionId);
       alert('Session ended successfully');
       await loadLoginData();
     } catch (err) {
@@ -82,7 +82,7 @@ const LoginHistory = () => {
       if (!window.confirm('End all other sessions? You will be logged out from all other devices.')) return;
 
       setLoading(true);
-      await loginInsightsService.terminateAllOtherSessions(user.uid);
+      await securityAPI.terminateAllOtherSessions(currentUser.uid);
       alert('All other sessions ended');
       await loadLoginData();
     } catch (err) {
@@ -95,7 +95,7 @@ const LoginHistory = () => {
 
   const handleMarkAsRecognized = async (loginId) => {
     try {
-      await loginInsightsService.markLoginAsRecognized(user.uid, loginId);
+      await securityAPI.markLoginAsRecognized(currentUser.uid, loginId);
       await loadLoginData();
       alert('Login marked as recognized');
     } catch (err) {

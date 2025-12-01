@@ -24,14 +24,14 @@
   border: none;
   font-size: 20px;
   cursor: pointer;
-  color: #667eea;
+  color: var(--primary-color);
   padding: 8px;
   transition: all 0.3s ease;
   border-radius: 6px;
 }
 
 .back-icon:hover {
-  background: rgba(102, 126, 234, 0.1);
+  background: rgba(var(--primary-rgb), 0.1);
 }
 
 .header-content {
@@ -153,14 +153,14 @@
 }
 
 .provider-card:hover {
-  border-color: #667eea;
+  border-color: var(--primary-color);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
 
 .provider-card.active {
-  background: rgba(102, 126, 234, 0.05);
-  border-color: #667eea;
+  background: rgba(var(--primary-rgb), 0.05);
+  border-color: var(--primary-color);
 }
 
 .provider-emoji {
@@ -198,8 +198,8 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 .form-group small {
@@ -233,12 +233,12 @@
 }
 
 .amount-btn:hover {
-  border-color: #667eea;
-  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px rgba(var(--primary-rgb), 0.2);
 }
 
 .amount-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   color: white;
   border-color: transparent;
 }
@@ -265,8 +265,8 @@
 
 .custom-amount input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
 }
 
 /* Step Actions */
@@ -298,13 +298,13 @@
 }
 
 .continue-btn {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   color: white;
 }
 
 .continue-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.3);
 }
 
 .continue-btn:disabled {
@@ -363,7 +363,7 @@
 
 .summary-item.highlight .value {
   font-size: 18px;
-  color: #667eea;
+  color: var(--primary-color);
 }
 
 /* Footer */

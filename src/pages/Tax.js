@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import ErrorBoundary from '../components/ErrorBoundary';
-import paystackService from '../services/paystackService';
+import { paymentAPI } from '../services/backendAPI';
 import './Tax.css';
 
 // Tax Configuration Data
@@ -89,6 +90,7 @@ const AMOUNT_PRESETS = [1000, 5000, 10000, 25000, 50000, 100000];
 
 const Tax = () => {
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   // State management
   const [currentStep, setCurrentStep] = useState(1);
@@ -162,29 +164,58 @@ const Tax = () => {
         throw new Error('Amount must be at least ₦100');
       }
 
-      // Initialize Paystack payment
-      const response = await paystackService.initializePayment({
-        email,
-        amount: amount * 100, // Convert to kobo
-        reference: `TAX-${Date.now()}`,
-        metadata: {
-          type: 'tax_payment',
-          taxType: selectedTaxType,
-          authority: selectedAuthority,
-          taxID,
-          amount,
-        },
-      });
+      // Call backend payment API
+      const result = await paymentAPI.payTax(
+        selectedTaxType,
+        taxID,
+        amount,
+        selectedAuthority
+      );
 
-      if (response.data && response.data.authorization_url) {
-        // Redirect to payment page
-        window.location.href = response.data.authorization_url;
-      } else {
-        throw new Error('Failed to initialize payment');
+      if (result.success) {
+        // Navigate to success page
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'tax',
+            taxType: selectedTaxType,
+            taxID,
+            amount,
+            authority: selectedAuthority,
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0
+          }
+        });
       }
-    } catch (err) {
-      console.error('Tax payment error:', err);
-      setError(err.message || 'Failed to process tax payment. Please try again.');
+    } catch (error) {
+      console.error('Tax payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        navigate('/pin', {
+          state: {
+            type: 'tax',
+            taxType: selectedTaxType,
+            taxID,
+            amount: getAmount(),
+            authority: selectedAuthority,
+            description: `Tax Payment - ${selectedTaxType} - ₦${getAmount().toLocaleString()}`,
+            onPinVerified: async (pinHash) => {
+              const pinResult = await paymentAPI.payTax(
+                selectedTaxType,
+                taxID,
+                getAmount(),
+                selectedAuthority,
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Failed to process tax payment. Please try again.');
+      }
+    } finally {
       setLoading(false);
     }
   };

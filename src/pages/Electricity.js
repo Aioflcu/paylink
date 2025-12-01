@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import payflex from '../services/payflex';
+import { paymentAPI } from '../services/backendAPI';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './Electricity.css';
 
@@ -148,19 +149,67 @@ const Electricity = () => {
     }
   };
 
-  const handleProceedToPin = () => {
-    navigate('/pin', {
-      state: {
-        type: 'electricity',
-        provider: selectedDisco?.name || formData.disco,
-        discoId: formData.disco,
-        meterNumber: formData.meterNumber,
-        meterType: formData.meterType,
-        amount: parseFloat(formData.amount),
-        phone: formData.phone,
-        description: `Electricity: ${selectedDisco?.name} - ${formData.meterNumber}`
+  const handleProceedToPin = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      // Call backend payment API
+      const result = await paymentAPI.payElectricity(
+        formData.meterNumber,
+        formData.meterType,
+        parseFloat(formData.amount),
+        formData.disco
+      );
+
+      if (result.success) {
+        // Navigate to success page
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'electricity',
+            provider: selectedDisco?.name || formData.disco,
+            meterNumber: formData.meterNumber,
+            amount: parseFloat(formData.amount),
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0,
+            description: `Electricity: ${selectedDisco?.name} - ${formData.meterNumber}`
+          }
+        });
       }
-    });
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        navigate('/pin', {
+          state: {
+            type: 'electricity',
+            provider: selectedDisco?.name || formData.disco,
+            discoId: formData.disco,
+            meterNumber: formData.meterNumber,
+            meterType: formData.meterType,
+            amount: parseFloat(formData.amount),
+            phone: formData.phone,
+            description: `Electricity: ${selectedDisco?.name} - ${formData.meterNumber}`,
+            onPinVerified: async (pinHash) => {
+              const pinResult = await paymentAPI.payElectricity(
+                formData.meterNumber,
+                formData.meterType,
+                parseFloat(formData.amount),
+                formData.disco,
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderStep1 = () => (

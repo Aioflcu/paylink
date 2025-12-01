@@ -22,4 +22,7 @@ const walletSchema = new mongoose.Schema({
   }
 });
 
+// Ensure an index on userId for fast lookups and unique wallet per user
+walletSchema.index({ userId: 1 }, { unique: true, background: true });
+
 module.exports = mongoose.model('Wallet', walletSchema);

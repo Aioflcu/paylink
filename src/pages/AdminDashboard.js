@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { collection, query, where, getDocs, orderBy, limit, updateDoc, doc, serverTimestamp } from 'firebase/firestore';
-import AnalyticsChart from '../components/AnalyticsChart';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -29,9 +28,6 @@ const AdminDashboard = () => {
       loadUsers();
       loadTransactions();
       loadFailedTransactions();
-      generateRevenueTrendData();
-      generateUserGrowthData();
-      generateTransactionTypesData();
     }
   }, [currentUser]);
 
@@ -132,122 +128,6 @@ const AdminDashboard = () => {
       setFailedTxns(failedList);
     } catch (error) {
       console.error('Error loading failed transactions:', error);
-    }
-  };
-
-  const generateRevenueTrendData = async () => {
-    try {
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      const transactionsRef = query(
-        collection(db, 'transactions'),
-        where('timestamp', '>=', thirtyDaysAgo),
-        where('status', '==', 'success'),
-        orderBy('timestamp', 'asc')
-      );
-
-      const querySnapshot = await getDocs(transactionsRef);
-      const dailyRevenue = {};
-
-      querySnapshot.forEach(doc => {
-        const data = doc.data();
-        const date = data.timestamp?.toDate?.() || new Date(data.timestamp);
-        const dayKey = date.toISOString().split('T')[0];
-        const amount = data.amount || 0;
-
-        dailyRevenue[dayKey] = (dailyRevenue[dayKey] || 0) + amount;
-      });
-
-      const trendData = Object.entries(dailyRevenue)
-        .map(([date, revenue]) => ({
-          date,
-          revenue: revenue / 100, // Convert to Naira
-          formattedDate: new Date(date).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric'
-          })
-        }))
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      setRevenueTrendData(trendData);
-    } catch (error) {
-      console.error('Error generating revenue trend data:', error);
-      setRevenueTrendData([]);
-    }
-  };
-
-  const generateUserGrowthData = async () => {
-    try {
-      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
-      const usersRef = query(
-        collection(db, 'users'),
-        where('createdAt', '>=', ninetyDaysAgo),
-        orderBy('createdAt', 'asc')
-      );
-
-      const querySnapshot = await getDocs(usersRef);
-      const dailyUsers = {};
-
-      querySnapshot.forEach(doc => {
-        const data = doc.data();
-        const date = data.createdAt?.toDate?.() || new Date(data.createdAt);
-        const dayKey = date.toISOString().split('T')[0];
-
-        dailyUsers[dayKey] = (dailyUsers[dayKey] || 0) + 1;
-      });
-
-      let cumulativeUsers = 0;
-      const growthData = Object.entries(dailyUsers)
-        .map(([date, newUsers]) => {
-          cumulativeUsers += newUsers;
-          return {
-            date,
-            newUsers,
-            totalUsers: cumulativeUsers,
-            formattedDate: new Date(date).toLocaleDateString('en-US', {
-              month: 'short',
-              day: 'numeric'
-            })
-          };
-        })
-        .sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      setUserGrowthData(growthData);
-    } catch (error) {
-      console.error('Error generating user growth data:', error);
-      setUserGrowthData([]);
-    }
-  };
-
-  const generateTransactionTypesData = async () => {
-    try {
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-      const transactionsRef = query(
-        collection(db, 'transactions'),
-        where('timestamp', '>=', thirtyDaysAgo),
-        where('status', '==', 'success')
-      );
-
-      const querySnapshot = await getDocs(transactionsRef);
-      const typeCounts = {};
-
-      querySnapshot.forEach(doc => {
-        const type = doc.data().type || 'other';
-        typeCounts[type] = (typeCounts[type] || 0) + 1;
-      });
-
-      const total = Object.values(typeCounts).reduce((sum, count) => sum + count, 0);
-      const pieData = Object.entries(typeCounts)
-        .map(([type, count]) => ({
-          name: type.charAt(0).toUpperCase() + type.slice(1),
-          value: count,
-          percentage: ((count / total) * 100).toFixed(1)
-        }))
-        .sort((a, b) => b.value - a.value);
-
-      setTransactionTypesData(pieData);
-    } catch (error) {
-      console.error('Error generating transaction types data:', error);
-      setTransactionTypesData([]);
     }
   };
 

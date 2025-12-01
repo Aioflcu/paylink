@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import payflex from '../services/payflex';
+import { paymentAPI, payflexAPI } from '../services/backendAPI';
 import { validatePhone } from '../utils/validation';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './Data.css';
@@ -29,31 +29,35 @@ const Data = () => {
     { id: '9mobile', name: '9Mobile', emoji: '🟣', color: '#8B00FF' },
   ];
 
-  // Fallback data plans (in case API fails)
+  // Fallback data plans (in case API fails) - based on current Nigerian market rates
   const fallbackDataPlans = {
     mtn: [
-      { id: 'mtn-1gb', name: '1GB', price: 300, validity: '30 days' },
-      { id: 'mtn-2gb', name: '2GB', price: 500, validity: '30 days' },
-      { id: 'mtn-5gb', name: '5GB', price: 1200, validity: '30 days' },
-      { id: 'mtn-10gb', name: '10GB', price: 2000, validity: '30 days' },
+      { id: 'mtn-500mb', name: '500MB', price: 200, validity: '7 days' },
+      { id: 'mtn-1gb', name: '1GB', price: 405, validity: '30 days' },
+      { id: 'mtn-2gb', name: '2GB', price: 810, validity: '30 days' },
+      { id: 'mtn-5gb', name: '5GB', price: 2000, validity: '30 days' },
+      { id: 'mtn-10gb', name: '10GB', price: 3900, validity: '30 days' },
     ],
     airtel: [
-      { id: 'airtel-1gb', name: '1GB', price: 300, validity: '30 days' },
-      { id: 'airtel-2gb', name: '2GB', price: 500, validity: '30 days' },
-      { id: 'airtel-5gb', name: '5GB', price: 1200, validity: '30 days' },
-      { id: 'airtel-10gb', name: '10GB', price: 2000, validity: '30 days' },
+      { id: 'airtel-500mb', name: '500MB', price: 200, validity: '7 days' },
+      { id: 'airtel-1gb', name: '1GB', price: 400, validity: '30 days' },
+      { id: 'airtel-2gb', name: '2GB', price: 800, validity: '30 days' },
+      { id: 'airtel-5gb', name: '5GB', price: 1950, validity: '30 days' },
+      { id: 'airtel-10gb', name: '10GB', price: 3800, validity: '30 days' },
     ],
     glo: [
-      { id: 'glo-1gb', name: '1GB', price: 300, validity: '30 days' },
-      { id: 'glo-2gb', name: '2GB', price: 500, validity: '30 days' },
-      { id: 'glo-5gb', name: '5GB', price: 1200, validity: '30 days' },
-      { id: 'glo-10gb', name: '10GB', price: 2000, validity: '30 days' },
+      { id: 'glo-500mb', name: '500MB', price: 150, validity: '7 days' },
+      { id: 'glo-1gb', name: '1GB', price: 290, validity: '30 days' },
+      { id: 'glo-2gb', name: '2GB', price: 580, validity: '30 days' },
+      { id: 'glo-5gb', name: '5GB', price: 1450, validity: '30 days' },
+      { id: 'glo-10gb', name: '10GB', price: 2900, validity: '30 days' },
     ],
     '9mobile': [
-      { id: '9mobile-1gb', name: '1GB', price: 300, validity: '30 days' },
-      { id: '9mobile-2gb', name: '2GB', price: 500, validity: '30 days' },
-      { id: '9mobile-5gb', name: '5GB', price: 1200, validity: '30 days' },
-      { id: '9mobile-10gb', name: '10GB', price: 2000, validity: '30 days' },
+      { id: '9mobile-500mb', name: '500MB', price: 200, validity: '7 days' },
+      { id: '9mobile-1gb', name: '1GB', price: 400, validity: '30 days' },
+      { id: '9mobile-2gb', name: '2GB', price: 800, validity: '30 days' },
+      { id: '9mobile-5gb', name: '5GB', price: 2000, validity: '30 days' },
+      { id: '9mobile-10gb', name: '10GB', price: 3900, validity: '30 days' },
     ],
   };
 
@@ -84,12 +88,13 @@ const Data = () => {
     const fetchProviders = async () => {
       try {
         setLoading(true);
-        // Fetch REAL providers from PayFlex API
-        const realProviders = await payflex.getProviders('data');
+        // Fetch REAL providers from backend API
+        const data = await payflexAPI.getProviders('data');
         
-        if (realProviders && realProviders.length > 0) {
-          const mappedProviders = realProviders.map(provider => ({
+        if (data && data.providers && data.providers.length > 0) {
+          const mappedProviders = data.providers.map(provider => ({
             id: provider.provider_id || provider.id,
+            code: provider.code || provider.provider_id || provider.id,
             name: provider.provider_name || provider.name,
             emoji: getProviderEmoji(provider.provider_id || provider.id),
             color: getProviderColor(provider.provider_id || provider.id)
@@ -100,7 +105,7 @@ const Data = () => {
         }
         setError('');
       } catch (err) {
-        console.error('Error fetching providers from PayFlex:', err);
+        console.error('Error fetching providers:', err);
         setProviders(fallbackDataProviders);
       } finally {
         setLoading(false);
@@ -119,19 +124,34 @@ const Data = () => {
         setPlansLoading(true);
         setError('');
         
-        // Fetch REAL plans from PayFlex API
-        const realPlans = await payflex.getDataPlans(selectedProvider.id);
+        console.log(`Fetching data plans for provider: ${selectedProvider.id}`);
         
-        if (realPlans && realPlans.length > 0) {
-          setPlans(realPlans);
+        // Fetch REAL plans from backend API
+        const data = await payflexAPI.getPlans('data', selectedProvider.code || selectedProvider.id);
+        
+        console.log('Backend API response:', data);
+        
+        if (data && data.plans && data.plans.length > 0) {
+          // Normalize backend plans
+          const normalized = data.plans.map((p) => {
+            const id = p.id || p.plan_id || p.package_id || p.bundle_id;
+            const name = p.name || p.plan_name || p.package_name || 'Unknown Plan';
+            const price = Number(p.price || p.amount || 0) || 0;
+            const validity = p.validity || p.duration || '30 days';
+            
+            return { id, name, price, validity };
+          });
+          
+          console.log('Normalized plans:', normalized);
+          setPlans(normalized);
         } else {
-          // Fallback to local plans
           setPlans(fallbackDataPlans[selectedProvider.id] || []);
+          setError('Live data unavailable, showing standard rates');
         }
       } catch (err) {
-        console.error('Error fetching data plans from PayFlex:', err);
-        // Fallback to local plans if API fails
+        console.error('Error fetching data plans:', err);
         setPlans(fallbackDataPlans[selectedProvider.id] || []);
+        setError('Unable to fetch live rates, showing standard rates');
       } finally {
         setPlansLoading(false);
       }
@@ -177,25 +197,73 @@ const Data = () => {
     setError('');
   };
 
-  // Proceed to PIN verification
-  const handleProceed = () => {
+  // Proceed to payment submission
+  const handleProceed = async () => {
     if (!validatePhoneFunc(phoneNumber)) {
       return;
     }
 
-    // Navigate to PIN page with transaction data
-    navigate('/pin', {
-      state: {
-        type: 'data',
-        provider: selectedProvider.id,
-        providerName: selectedProvider.name,
-        planName: selectedPlan.name,
-        planId: selectedPlan.id,
-        amount: selectedPlan.price,
+    try {
+      setLoading(true);
+      setError('');
+
+      // Call backend payment API
+      const result = await paymentAPI.buyData(
         phoneNumber,
-        description: `Data - ${selectedProvider.name} ${selectedPlan.name} - ₦${selectedPlan.price.toLocaleString()}`
+        selectedPlan.id,
+        selectedProvider.code || selectedProvider.id,
+        selectedPlan.price
+      );
+
+      if (result.success) {
+        // Navigate to success page
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'data',
+            provider: selectedProvider.name,
+            plan: selectedPlan.name,
+            amount: selectedPlan.price,
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0,
+            description: `Data - ${selectedProvider.name} ${selectedPlan.name} - ₦${selectedPlan.price.toLocaleString()}`
+          }
+        });
       }
-    });
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        navigate('/pin', {
+          state: {
+            type: 'data',
+            provider: selectedProvider.id,
+            providerName: selectedProvider.name,
+            planName: selectedPlan.name,
+            planId: selectedPlan.id,
+            amount: selectedPlan.price,
+            phoneNumber,
+            description: `Data - ${selectedProvider.name} ${selectedPlan.name} - ₦${selectedPlan.price.toLocaleString()}`,
+            onPinVerified: async (pinHash) => {
+              // Retry with PIN after verification
+              const pinResult = await paymentAPI.buyData(
+                phoneNumber,
+                selectedPlan.id,
+                selectedProvider.code || selectedProvider.id,
+                selectedPlan.price,
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle back button

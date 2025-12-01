@@ -30,16 +30,16 @@
 }
 
 .preset-btn:hover {
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: var(--primary-color);
+  box-shadow: 0 4px 12px rgba(var(--primary-rgb), 0.15);
   transform: translateY(-3px);
 }
 
 .preset-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   color: white;
-  border-color: #667eea;
-  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  border-color: var(--primary-color);
+  box-shadow: 0 6px 20px rgba(var(--primary-rgb), 0.3);
 }
 
 .custom-amount {
@@ -66,7 +66,7 @@
 .currency-symbol {
   position: absolute;
   left: 16px;
-  color: #667eea;
+  color: var(--primary-color);
   font-weight: 600;
   font-size: 18px;
 }
@@ -82,8 +82,8 @@
 
 .custom-amount input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.08);
 }
 
 .amount-hint {
@@ -95,10 +95,10 @@
 
 .amount-display {
   padding: 20px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.08) 0%, rgba(204,82,0,0.06) 100%);
   border-radius: 10px;
   text-align: center;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--primary-color);
 }
 
 .amount-display p {
@@ -108,7 +108,7 @@
 }
 
 .amount-display h2 {
-  color: #667eea;
+  color: var(--primary-color);
   margin: 0;
   font-size: 28px;
   font-weight: 700;

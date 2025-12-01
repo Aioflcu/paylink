@@ -277,15 +277,27 @@ class RewardSystem {
 
   static async checkDiscountEligibility(userId) {
     try {
-      const user = await User.findById(userId).select('discountAmount discountExpires');
+      const { db } = require('../firebase');
+      const { doc, getDoc } = require('firebase/firestore');
 
-      if (!user.discountAmount || user.discountAmount <= 0) {
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
         return { eligible: false };
       }
 
-      if (user.discountExpires && user.discountExpires < new Date()) {
+      const userData = userSnap.data();
+      const discountAmount = userData.discountAmount || 0;
+      const discountExpires = userData.discountExpires?.toDate?.() || userData.discountExpires;
+
+      if (!discountAmount || discountAmount <= 0) {
+        return { eligible: false };
+      }
+
+      if (discountExpires && discountExpires < new Date()) {
         // Expired discount, clear it
-        await User.findByIdAndUpdate(userId, {
+        await updateDoc(userRef, {
           discountAmount: 0,
           discountExpires: null
         });
@@ -294,8 +306,8 @@ class RewardSystem {
 
       return {
         eligible: true,
-        amount: user.discountAmount,
-        expires: user.discountExpires
+        amount: discountAmount,
+        expires: discountExpires
       };
     } catch (error) {
       console.error('Error checking discount eligibility:', error);
@@ -304,50 +316,69 @@ class RewardSystem {
   }
 
   static async applyDiscountToPurchase(userId, purchaseAmount) {
-    const discountInfo = await this.checkDiscountEligibility(userId);
+    try {
+      const { db } = require('../firebase');
+      const { doc, updateDoc } = require('firebase/firestore');
 
-    if (!discountInfo.eligible) {
+      const discountInfo = await this.checkDiscountEligibility(userId);
+
+      if (!discountInfo.eligible) {
+        return { discountedAmount: purchaseAmount, discountApplied: 0 };
+      }
+
+      const discountApplied = Math.min(discountInfo.amount, purchaseAmount);
+      const discountedAmount = purchaseAmount - discountApplied;
+
+      // Update remaining discount
+      const userRef = doc(db, 'users', userId);
+      const remainingDiscount = discountInfo.amount - discountApplied;
+      
+      if (remainingDiscount <= 0) {
+        await updateDoc(userRef, {
+          discountAmount: 0,
+          discountExpires: null
+        });
+      } else {
+        await updateDoc(userRef, {
+          discountAmount: remainingDiscount
+        });
+      }
+
+      return { discountedAmount, discountApplied };
+    } catch (error) {
+      console.error('Error applying discount to purchase:', error);
       return { discountedAmount: purchaseAmount, discountApplied: 0 };
     }
-
-    const discountApplied = Math.min(discountInfo.amount, purchaseAmount);
-    const discountedAmount = purchaseAmount - discountApplied;
-
-    // Update remaining discount
-    const remainingDiscount = discountInfo.amount - discountApplied;
-    if (remainingDiscount <= 0) {
-      await User.findByIdAndUpdate(userId, {
-        discountAmount: 0,
-        discountExpires: null
-      });
-    } else {
-      await User.findByIdAndUpdate(userId, {
-        discountAmount: remainingDiscount
-      });
-    }
-
-    return { discountedAmount, discountApplied };
   }
 
   // Admin functions for managing rewards
   static async adjustUserPoints(userId, points, reason, adminId) {
     try {
+      const { db } = require('../firebase');
+      const { doc, getDoc, updateDoc, collection, addDoc, Timestamp, increment } = require('firebase/firestore');
 
-      await User.findByIdAndUpdate(userId, { $inc: { points: points } });
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      
+      if (!userSnap.exists()) {
+        throw new Error('User not found');
+      }
 
-      const rewardTransaction = new RewardTransaction({
-        userId,
+      // Update user points
+      await updateDoc(userRef, {
+        rewardPoints: increment(points)
+      });
+
+      // Create reward transaction record
+      const rewardTxRef = collection(db, 'users', userId, 'rewardTransactions');
+      await addDoc(rewardTxRef, {
         type: points > 0 ? 'earned' : 'redeemed',
         points: Math.abs(points),
         reason: `Admin adjustment: ${reason}`,
-        adminId
+        adminId,
+        adjustmentValue: points,
+        createdAt: Timestamp.now()
       });
-
-      if (points < 0) {
-        rewardTransaction.points = -rewardTransaction.points;
-      }
-
-      await rewardTransaction.save();
 
       return true;
     } catch (error) {
@@ -358,16 +389,30 @@ class RewardSystem {
 
   static async getSystemStats() {
     try {
+      const { db } = require('../firebase');
+      const { collection, query, where, getDocs } = require('firebase/firestore');
 
-      const [totalUsers, totalPoints, totalRedemptions] = await Promise.all([
-        User.countDocuments({ points: { $gt: 0 } }),
-        User.aggregate([{ $group: { _id: null, total: { $sum: '$points' } } }]),
-        RewardTransaction.countDocuments({ type: 'redeemed' })
-      ]);
+      // Get all users with points
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('rewardPoints', '>', 0));
+      const usersSnap = await getDocs(q);
+      const totalUsersWithPoints = usersSnap.size;
+
+      // Calculate total points in system
+      let totalPointsInSystem = 0;
+      usersSnap.forEach(doc => {
+        totalPointsInSystem += doc.data().rewardPoints || 0;
+      });
+
+      // Get total redemptions
+      const rewardTxRef = collection(db, 'rewardTransactions');
+      const redemptionQ = query(rewardTxRef, where('type', '==', 'redeemed'));
+      const redemptionSnap = await getDocs(redemptionQ);
+      const totalRedemptions = redemptionSnap.size;
 
       return {
-        totalUsersWithPoints: totalUsers,
-        totalPointsInSystem: totalPoints[0]?.total || 0,
+        totalUsersWithPoints,
+        totalPointsInSystem,
         totalRedemptions
       };
     } catch (error) {

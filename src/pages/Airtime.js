@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import payflex from '../services/payflex';
+import { paymentAPI, payflexAPI } from '../services/backendAPI';
 import { validatePhone } from '../utils/validation';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './Airtime.css';
@@ -36,16 +36,17 @@ const Airtime = () => {
     const fetchProviders = async () => {
       try {
         setLoading(true);
-        // Fetch REAL providers from PayFlex API
-        const realProviders = await payflex.getProviders('airtime');
+        // Fetch LIVE providers from backend PayFlex proxy
+        const data = await payflexAPI.getProviders('airtime');
         
-        if (realProviders && realProviders.length > 0) {
+        if (data.success && data.providers && data.providers.length > 0) {
           // Map PayFlex providers to our format
-          const mappedProviders = realProviders.map(provider => ({
-            id: provider.provider_id || provider.id,
-            name: provider.provider_name || provider.name,
-            emoji: getProviderEmoji(provider.provider_id || provider.id),
-            color: getProviderColor(provider.provider_id || provider.id)
+          const mappedProviders = data.providers.map(provider => ({
+            id: provider.code || provider.id,
+            code: provider.code,
+            name: provider.name,
+            emoji: getProviderEmoji(provider.code || provider.id),
+            color: getProviderColor(provider.code || provider.id)
           }));
           setProviders(mappedProviders);
         } else {
@@ -54,7 +55,7 @@ const Airtime = () => {
         }
         setError('');
       } catch (err) {
-        console.error('Error fetching providers from PayFlex:', err);
+        console.error('Error fetching providers from backend:', err);
         // Fallback to hardcoded providers if API fails
         setProviders(airtimeProviders);
       } finally {
@@ -127,23 +128,62 @@ const Airtime = () => {
     setError('');
   };
 
-  // Proceed to PIN verification
-  const handleProceed = () => {
+  // Proceed to payment submission (with backend integration)
+  const handleProceed = async () => {
     if (!validatePhoneFunc(phoneNumber)) {
       return;
     }
 
-    // Navigate to PIN page with transaction data
-    navigate('/pin', {
-      state: {
-        type: 'airtime',
-        provider: selectedProvider.id,
-        providerName: selectedProvider.name,
-        amount: parseFloat(amount),
+    setLoading(true);
+    setError('');
+
+    try {
+      // Submit payment to backend
+      const result = await paymentAPI.buyAirtime(
         phoneNumber,
-        description: `Airtime - ${selectedProvider.name} - ₦${parseFloat(amount).toLocaleString()}`
+        parseFloat(amount),
+        selectedProvider.code || selectedProvider.id
+        // PIN hash will be added by PIN page if user has PIN set
+      );
+
+      if (result.success) {
+        // Navigate to success page with transaction details
+        navigate('/success', {
+          state: {
+            type: 'airtime',
+            transactionId: result.transaction.id,
+            provider: selectedProvider.name,
+            phone: phoneNumber,
+            amount: result.transaction.amount,
+            fee: result.transaction.fee,
+            totalAmount: result.transaction.totalAmount,
+            rewardPoints: result.transaction.rewardPoints,
+            status: result.transaction.status
+          }
+        });
       }
-    });
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        // Navigate to PIN page with transaction data
+        navigate('/pin', {
+          state: {
+            type: 'airtime',
+            provider: selectedProvider.code || selectedProvider.id,
+            providerName: selectedProvider.name,
+            amount: parseFloat(amount),
+            phoneNumber,
+            description: `Airtime - ${selectedProvider.name} - ₦${parseFloat(amount).toLocaleString()}`
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Handle back button

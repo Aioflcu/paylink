@@ -1,0 +1,36 @@
+name: Reconciliation Job
+
+on:
+  schedule:
+    - cron: '0 * * * *' # hourly - adjust as needed
+  workflow_dispatch: {}
+
+jobs:
+  run-reconcile:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Run reconciliation
+        env:
+          MONGODB_URI: ${{ secrets.RECONCILE_MONGODB_URI }}
+          MONNIFY_BASE_URL: ${{ secrets.MONNIFY_BASE_URL }}
+          MONNIFY_API_KEY: ${{ secrets.MONNIFY_API_KEY }}
+          MONNIFY_SECRET_KEY: ${{ secrets.MONNIFY_SECRET_KEY }}
+          PEYFLEX_BASE_URL: ${{ secrets.PEYFLEX_BASE_URL }}
+          PEYFLEX_API_KEY: ${{ secrets.PEYFLEX_API_KEY }}
+        run: |
+          echo "Starting reconciliation run"
+          npm run reconcile

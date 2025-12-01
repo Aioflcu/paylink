@@ -8,6 +8,9 @@ import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
 class PayFlexService {
   constructor() {
+    // Use backend proxy (http://localhost:5000) instead of direct API calls for CORS safety
+    this.backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+    // Fallback to direct PayFlex if backend unavailable
     this.apiUrl = process.env.REACT_APP_PAYFLEX_API_URL || 'https://api.payflex.co';
     this.apiKey = process.env.REACT_APP_PAYFLEX_API_KEY;
   }
@@ -19,6 +22,25 @@ class PayFlexService {
    */
   async getProviders(utilityType) {
     try {
+      // Try backend first
+      const backendResponse = await fetch(`${this.backendUrl}/api/payflex/providers/${utilityType}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (backendResponse.ok) {
+        const data = await backendResponse.json();
+        console.log('[PayFlex] Backend providers response:', data);
+        
+        // Handle various response structures
+        const providers = Array.isArray(data) ? data : (data.data || data.providers || []);
+        console.log('[PayFlex] Extracted providers array:', providers);
+        return providers;
+      }
+
+      // Fallback to direct API
+      console.warn('[PayFlex] Backend unavailable, falling back to direct API for providers');
       const response = await fetch(`${this.apiUrl}/providers/${utilityType}`, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
@@ -27,14 +49,18 @@ class PayFlexService {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch providers');
+        throw new Error(`PayFlex API returned ${response.status}`);
       }
 
       const data = await response.json();
-      return data.data || [];
+      console.log('[PayFlex] Direct API providers response:', data);
+      
+      const providers = Array.isArray(data) ? data : (data.data || data.providers || []);
+      console.log('[PayFlex] Extracted providers array:', providers);
+      return providers;
     } catch (error) {
-      console.error('Error fetching providers:', error);
-      throw error;
+      console.error('[PayFlex] Error fetching providers:', error);
+      return []; // Return empty array so fallback is used
     }
   }
 
@@ -45,6 +71,25 @@ class PayFlexService {
    */
   async getDataPlans(provider) {
     try {
+      // Try backend first
+      const backendResponse = await fetch(`${this.backendUrl}/api/payflex/plans/data/${provider}`, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (backendResponse.ok) {
+        const data = await backendResponse.json();
+        console.log('[PayFlex] Backend response:', data);
+        
+        // Handle various response structures from PayFlex
+        const plans = Array.isArray(data) ? data : (data.data || data.plans || []);
+        console.log('[PayFlex] Extracted plans array:', plans);
+        return plans;
+      }
+
+      // Fallback to direct API
+      console.warn('[PayFlex] Backend unavailable, falling back to direct API');
       const response = await fetch(`${this.apiUrl}/plans/data/${provider}`, {
         headers: {
           'Authorization': `Bearer ${this.apiKey}`,
@@ -53,14 +98,18 @@ class PayFlexService {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch data plans');
+        throw new Error(`PayFlex API returned ${response.status}`);
       }
 
       const data = await response.json();
-      return data.data || [];
+      console.log('[PayFlex] Direct API response:', data);
+      
+      const plans = Array.isArray(data) ? data : (data.data || data.plans || []);
+      console.log('[PayFlex] Extracted plans array:', plans);
+      return plans;
     } catch (error) {
-      console.error('Error fetching data plans:', error);
-      throw error;
+      console.error('[PayFlex] Error fetching data plans:', error);
+      return []; // Return empty array so fallback is used
     }
   }
 

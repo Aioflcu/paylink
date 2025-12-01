@@ -1,0 +1,228 @@
+[debug] [2025-11-30T20:39:57.861Z] ----------------------------------------------------------------------
+[debug] [2025-11-30T20:39:57.862Z] Command:       /Users/oyelade/.nvm/versions/node/v20.19.6/bin/node /Users/oyelade/.npm-global/bin/firebase deploy --only hosting --project paylink-f183e --debug
+[debug] [2025-11-30T20:39:57.863Z] CLI Version:   14.26.0
+[debug] [2025-11-30T20:39:57.863Z] Platform:      darwin
+[debug] [2025-11-30T20:39:57.863Z] Node Version:  v20.19.6
+[debug] [2025-11-30T20:39:57.863Z] Time:          Sun Nov 30 2025 21:39:57 GMT+0100 (West Africa Standard Time)
+[debug] [2025-11-30T20:39:57.863Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-30T20:39:57.964Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-30T20:39:57.964Z] > authorizing via signed-in user (kd1dave123@gmail.com)
+[debug] [2025-11-30T20:39:57.965Z] [iam] checking project paylink-f183e for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2025-11-30T20:39:57.965Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:39:57.965Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:39:57.966Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/paylink-f183e:testIamPermissions [none]
+[debug] [2025-11-30T20:39:57.966Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/paylink-f183e:testIamPermissions x-goog-quota-user=projects/paylink-f183e
+[debug] [2025-11-30T20:39:57.966Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/paylink-f183e:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-11-30T20:39:59.268Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/paylink-f183e:testIamPermissions 200
+[debug] [2025-11-30T20:39:59.268Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/paylink-f183e:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2025-11-30T20:39:59.269Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:39:59.269Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:39:59.270Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/paylink-f183e [none]
+[debug] [2025-11-30T20:40:00.901Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/paylink-f183e 200
+[debug] [2025-11-30T20:40:00.901Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/paylink-f183e {"projectId":"paylink-f183e","projectNumber":"1065137322177","displayName":"Paylink","name":"projects/paylink-f183e","resources":{"hostingSite":"paylink-f183e"},"state":"ACTIVE","etag":"1_81741bb0-50b9-4e62-b200-b098f9da227c"}
+[info] 
+[info] === Deploying to 'paylink-f183e'...
+[info] 
+[info] i  deploying hosting 
+[debug] [2025-11-30T20:40:00.909Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:00.909Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:00.910Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions [none]
+[debug] [2025-11-30T20:40:00.910Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions {"status":"CREATED","labels":{"deployment-tool":"cli-firebase"}}
+[debug] [2025-11-30T20:40:06.330Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions 200
+[debug] [2025-11-30T20:40:06.330Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions {"name":"projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130","status":"CREATED","config":{},"labels":{"deployment-tool":"cli-firebase"}}
+[info] i  hosting[paylink-f183e]: beginning deploy... 
+[info] i  hosting[paylink-f183e]: found 22 files in build 
+[debug] [2025-11-30T20:40:06.355Z] [hosting] uploading with 200 concurrency
+[debug] [2025-11-30T20:40:06.356Z] [hosting] hash cache [YnVpbGQ] not populated
+[debug] [2025-11-30T20:40:07.032Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.032Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.033Z] [hosting] hash cache [YnVpbGQ] stored for 22 files
+[debug] [2025-11-30T20:40:07.033Z] [hosting][hash queue][FINAL] {"max":673,"min":19,"avg":63.90909090909091,"active":0,"complete":22,"success":22,"errored":0,"retried":0,"total":22,"elapsed":677}
+[debug] [2025-11-30T20:40:07.033Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130:populateFiles [none]
+[debug] [2025-11-30T20:40:07.033Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130:populateFiles {"files":{"/robots.txt":"391d14b3c2f8c9143a27a28c7399585142228d4d1bdbe2c87ac946de411fa9a2","/manifest.json":"4e1d3adad9ce7e17c0d13fac197f1c27091906f4ecf3909c9f51247bff345118","/logo512.png":"2356e0b814e58a349935c8de17226873d615d088a867d591fef48a64c80c9a2f","/logo192.png":"f66564670b5bfe49f3f04a5b63107bae60f4a7736f1d3b83aa0115f7acf45150","/index.html":"59d0f619600df8ad8447dde087b381122832a01a651d832b7cc572301b165ed1","/asset-manifest.json":"ae59fb8487e22d9fcf1d6d516d2e9051147b1b9580367fa627da097d98d750b5","/static/js/main.12edf0c1.js.LICENSE.txt":"78162d182d82d6f6c46c4ca3c29c07842810c242fca182d28a93ec28bca50048","/favicon.ico":"1463be9bedc82e16f9364eec7a1f5152cbe56229401381eed65c1496cb884407","/static/js/977.4c644470.chunk.js.LICENSE.txt":"86d11589c9a484a3521eb3bb8c908aa1d1bf3355cd88c2ef0bf2fa9f820e0a6f","/static/js/977.4c644470.chunk.js":"00d0883d9ff9f3a369aca9c19855c92bfb2432153587701bded8ac22e7023f0d","/static/js/488.77b2e644.chunk.js.map":"fadcb5b4bded7ae484d39914d9ec377213231c8e22152122a329c2ab4e595825","/static/js/488.77b2e644.chunk.js":"6d4fd94824d1e882bf61219c09b7c757a117e5acea8e33007836d662bce05306","/static/js/238.b8da9b14.chunk.js.LICENSE.txt":"89ed1abdef77c21728c9b6c4184470beaadd0469a468c3fabd46b20a21588a81","/static/js/977.4c644470.chunk.js.map":"7a40c446864a48dbaa10232d86d8af7829ed2119e1da823e11b1fc4319a1740d","/static/js/455.78fb5ae9.chunk.js":"f88f4adfda705d00e9215b85771734661dbefd46c844bad776007656f4ff04c3","/static/css/main.94e58aa5.css":"2651566b0e858e00a36a2ac847f736a0434a035ff1975f98936a6ffb207cef9c","/static/js/455.78fb5ae9.chunk.js.map":"2f1eacc4ca48a072a68983c11c769cf932b4b4f58e17dafbfce48fd97be21855","/static/js/238.b8da9b14.chunk.js":"0aa54388f2e9a2141f7b708e43fe2e16bb4a09753496c9f2076e89d0a904acfe","/static/css/main.94e58aa5.css.map":"7f8e60eda1781f6a9f50c49706f8a721f1d8056667a0635dc952538032e51425","/static/js/238.b8da9b14.chunk.js.map":"cd979d9d639e70858a8069114a9bf7f8c7f8c4146a5ce6d1de5735cf6347c84c","/static/js/main.12edf0c1.js":"51d19d8e83c6e82ea60f6b0ecc388a8c610a278f6b044ecbc1d81e87033d1894","/static/js/main.12edf0c1.js.map":"4ecb0e0bd9a6581266603a800f661f482a1fea3a3044f004b2a020ed1fdce886"}}
+[debug] [2025-11-30T20:40:07.555Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130:populateFiles 200
+[debug] [2025-11-30T20:40:07.555Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130:populateFiles {"uploadRequiredHashes":["ae59fb8487e22d9fcf1d6d516d2e9051147b1b9580367fa627da097d98d750b5","f88f4adfda705d00e9215b85771734661dbefd46c844bad776007656f4ff04c3","cd979d9d639e70858a8069114a9bf7f8c7f8c4146a5ce6d1de5735cf6347c84c","59d0f619600df8ad8447dde087b381122832a01a651d832b7cc572301b165ed1","0aa54388f2e9a2141f7b708e43fe2e16bb4a09753496c9f2076e89d0a904acfe","86d11589c9a484a3521eb3bb8c908aa1d1bf3355cd88c2ef0bf2fa9f820e0a6f","78162d182d82d6f6c46c4ca3c29c07842810c242fca182d28a93ec28bca50048","7a40c446864a48dbaa10232d86d8af7829ed2119e1da823e11b1fc4319a1740d","4e1d3adad9ce7e17c0d13fac197f1c27091906f4ecf3909c9f51247bff345118","6d4fd94824d1e882bf61219c09b7c757a117e5acea8e33007836d662bce05306","2356e0b814e58a349935c8de17226873d615d088a867d591fef48a64c80c9a2f","89ed1abdef77c21728c9b6c4184470beaadd0469a468c3fabd46b20a21588a81","f66564670b5bfe49f3f04a5b63107bae60f4a7736f1d3b83aa0115f7acf45150","51d19d8e83c6e82ea60f6b0ecc388a8c610a278f6b044ecbc1d81e87033d1894","1463be9bedc82e16f9364eec7a1f5152cbe56229401381eed65c1496cb884407","fadcb5b4bded7ae484d39914d9ec377213231c8e22152122a329c2ab4e595825","2f1eacc4ca48a072a68983c11c769cf932b4b4f58e17dafbfce48fd97be21855","4ecb0e0bd9a6581266603a800f661f482a1fea3a3044f004b2a020ed1fdce886","391d14b3c2f8c9143a27a28c7399585142228d4d1bdbe2c87ac946de411fa9a2","7f8e60eda1781f6a9f50c49706f8a721f1d8056667a0635dc952538032e51425","2651566b0e858e00a36a2ac847f736a0434a035ff1975f98936a6ffb207cef9c","00d0883d9ff9f3a369aca9c19855c92bfb2432153587701bded8ac22e7023f0d"],"uploadUrl":"https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files"}
+[debug] [2025-11-30T20:40:07.556Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.556Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.557Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.558Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.559Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:07.560Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/ae59fb8487e22d9fcf1d6d516d2e9051147b1b9580367fa627da097d98d750b5 [none]
+[debug] [2025-11-30T20:40:07.560Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/ae59fb8487e22d9fcf1d6d516d2e9051147b1b9580367fa627da097d98d750b5 [stream]
+[debug] [2025-11-30T20:40:07.562Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f88f4adfda705d00e9215b85771734661dbefd46c844bad776007656f4ff04c3 [none]
+[debug] [2025-11-30T20:40:07.562Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f88f4adfda705d00e9215b85771734661dbefd46c844bad776007656f4ff04c3 [stream]
+[debug] [2025-11-30T20:40:07.563Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/cd979d9d639e70858a8069114a9bf7f8c7f8c4146a5ce6d1de5735cf6347c84c [none]
+[debug] [2025-11-30T20:40:07.563Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/cd979d9d639e70858a8069114a9bf7f8c7f8c4146a5ce6d1de5735cf6347c84c [stream]
+[debug] [2025-11-30T20:40:07.564Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/59d0f619600df8ad8447dde087b381122832a01a651d832b7cc572301b165ed1 [none]
+[debug] [2025-11-30T20:40:07.564Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/59d0f619600df8ad8447dde087b381122832a01a651d832b7cc572301b165ed1 [stream]
+[debug] [2025-11-30T20:40:07.565Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/0aa54388f2e9a2141f7b708e43fe2e16bb4a09753496c9f2076e89d0a904acfe [none]
+[debug] [2025-11-30T20:40:07.565Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/0aa54388f2e9a2141f7b708e43fe2e16bb4a09753496c9f2076e89d0a904acfe [stream]
+[debug] [2025-11-30T20:40:07.567Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/86d11589c9a484a3521eb3bb8c908aa1d1bf3355cd88c2ef0bf2fa9f820e0a6f [none]
+[debug] [2025-11-30T20:40:07.567Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/86d11589c9a484a3521eb3bb8c908aa1d1bf3355cd88c2ef0bf2fa9f820e0a6f [stream]
+[debug] [2025-11-30T20:40:07.568Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/78162d182d82d6f6c46c4ca3c29c07842810c242fca182d28a93ec28bca50048 [none]
+[debug] [2025-11-30T20:40:07.568Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/78162d182d82d6f6c46c4ca3c29c07842810c242fca182d28a93ec28bca50048 [stream]
+[debug] [2025-11-30T20:40:07.570Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7a40c446864a48dbaa10232d86d8af7829ed2119e1da823e11b1fc4319a1740d [none]
+[debug] [2025-11-30T20:40:07.570Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7a40c446864a48dbaa10232d86d8af7829ed2119e1da823e11b1fc4319a1740d [stream]
+[debug] [2025-11-30T20:40:07.572Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4e1d3adad9ce7e17c0d13fac197f1c27091906f4ecf3909c9f51247bff345118 [none]
+[debug] [2025-11-30T20:40:07.572Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4e1d3adad9ce7e17c0d13fac197f1c27091906f4ecf3909c9f51247bff345118 [stream]
+[debug] [2025-11-30T20:40:07.573Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/6d4fd94824d1e882bf61219c09b7c757a117e5acea8e33007836d662bce05306 [none]
+[debug] [2025-11-30T20:40:07.573Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/6d4fd94824d1e882bf61219c09b7c757a117e5acea8e33007836d662bce05306 [stream]
+[debug] [2025-11-30T20:40:07.574Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2356e0b814e58a349935c8de17226873d615d088a867d591fef48a64c80c9a2f [none]
+[debug] [2025-11-30T20:40:07.574Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2356e0b814e58a349935c8de17226873d615d088a867d591fef48a64c80c9a2f [stream]
+[debug] [2025-11-30T20:40:07.575Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/89ed1abdef77c21728c9b6c4184470beaadd0469a468c3fabd46b20a21588a81 [none]
+[debug] [2025-11-30T20:40:07.575Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/89ed1abdef77c21728c9b6c4184470beaadd0469a468c3fabd46b20a21588a81 [stream]
+[debug] [2025-11-30T20:40:07.575Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f66564670b5bfe49f3f04a5b63107bae60f4a7736f1d3b83aa0115f7acf45150 [none]
+[debug] [2025-11-30T20:40:07.575Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f66564670b5bfe49f3f04a5b63107bae60f4a7736f1d3b83aa0115f7acf45150 [stream]
+[debug] [2025-11-30T20:40:07.576Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/51d19d8e83c6e82ea60f6b0ecc388a8c610a278f6b044ecbc1d81e87033d1894 [none]
+[debug] [2025-11-30T20:40:07.576Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/51d19d8e83c6e82ea60f6b0ecc388a8c610a278f6b044ecbc1d81e87033d1894 [stream]
+[debug] [2025-11-30T20:40:07.577Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/1463be9bedc82e16f9364eec7a1f5152cbe56229401381eed65c1496cb884407 [none]
+[debug] [2025-11-30T20:40:07.577Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/1463be9bedc82e16f9364eec7a1f5152cbe56229401381eed65c1496cb884407 [stream]
+[debug] [2025-11-30T20:40:07.578Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/fadcb5b4bded7ae484d39914d9ec377213231c8e22152122a329c2ab4e595825 [none]
+[debug] [2025-11-30T20:40:07.578Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/fadcb5b4bded7ae484d39914d9ec377213231c8e22152122a329c2ab4e595825 [stream]
+[debug] [2025-11-30T20:40:07.579Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2f1eacc4ca48a072a68983c11c769cf932b4b4f58e17dafbfce48fd97be21855 [none]
+[debug] [2025-11-30T20:40:07.579Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2f1eacc4ca48a072a68983c11c769cf932b4b4f58e17dafbfce48fd97be21855 [stream]
+[debug] [2025-11-30T20:40:07.579Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4ecb0e0bd9a6581266603a800f661f482a1fea3a3044f004b2a020ed1fdce886 [none]
+[debug] [2025-11-30T20:40:07.579Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4ecb0e0bd9a6581266603a800f661f482a1fea3a3044f004b2a020ed1fdce886 [stream]
+[debug] [2025-11-30T20:40:07.580Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/391d14b3c2f8c9143a27a28c7399585142228d4d1bdbe2c87ac946de411fa9a2 [none]
+[debug] [2025-11-30T20:40:07.580Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/391d14b3c2f8c9143a27a28c7399585142228d4d1bdbe2c87ac946de411fa9a2 [stream]
+[debug] [2025-11-30T20:40:07.581Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7f8e60eda1781f6a9f50c49706f8a721f1d8056667a0635dc952538032e51425 [none]
+[debug] [2025-11-30T20:40:07.581Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7f8e60eda1781f6a9f50c49706f8a721f1d8056667a0635dc952538032e51425 [stream]
+[debug] [2025-11-30T20:40:07.582Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2651566b0e858e00a36a2ac847f736a0434a035ff1975f98936a6ffb207cef9c [none]
+[debug] [2025-11-30T20:40:07.582Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2651566b0e858e00a36a2ac847f736a0434a035ff1975f98936a6ffb207cef9c [stream]
+[debug] [2025-11-30T20:40:07.582Z] >>> [apiv2][query] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/00d0883d9ff9f3a369aca9c19855c92bfb2432153587701bded8ac22e7023f0d [none]
+[debug] [2025-11-30T20:40:07.583Z] >>> [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/00d0883d9ff9f3a369aca9c19855c92bfb2432153587701bded8ac22e7023f0d [stream]
+[debug] [2025-11-30T20:40:07.583Z] [hosting][populate queue][FINAL] {"max":528,"min":528,"avg":528,"active":0,"complete":1,"success":1,"errored":0,"retried":0,"total":1,"elapsed":551}
+[debug] [2025-11-30T20:40:07.583Z] [hosting] uploads queued: 22
+[info] i  hosting: uploading new files [0/22] (0%) 
+[debug] [2025-11-30T20:40:09.198Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/1463be9bedc82e16f9364eec7a1f5152cbe56229401381eed65c1496cb884407 200
+[debug] [2025-11-30T20:40:09.198Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/1463be9bedc82e16f9364eec7a1f5152cbe56229401381eed65c1496cb884407 [stream]
+[debug] [2025-11-30T20:40:09.313Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f66564670b5bfe49f3f04a5b63107bae60f4a7736f1d3b83aa0115f7acf45150 200
+[debug] [2025-11-30T20:40:09.314Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f66564670b5bfe49f3f04a5b63107bae60f4a7736f1d3b83aa0115f7acf45150 [stream]
+[debug] [2025-11-30T20:40:09.375Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2356e0b814e58a349935c8de17226873d615d088a867d591fef48a64c80c9a2f 200
+[debug] [2025-11-30T20:40:09.375Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2356e0b814e58a349935c8de17226873d615d088a867d591fef48a64c80c9a2f [stream]
+[debug] [2025-11-30T20:40:09.556Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/78162d182d82d6f6c46c4ca3c29c07842810c242fca182d28a93ec28bca50048 200
+[debug] [2025-11-30T20:40:09.557Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/78162d182d82d6f6c46c4ca3c29c07842810c242fca182d28a93ec28bca50048 [stream]
+[debug] [2025-11-30T20:40:09.567Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/86d11589c9a484a3521eb3bb8c908aa1d1bf3355cd88c2ef0bf2fa9f820e0a6f 200
+[debug] [2025-11-30T20:40:09.567Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/86d11589c9a484a3521eb3bb8c908aa1d1bf3355cd88c2ef0bf2fa9f820e0a6f [stream]
+[debug] [2025-11-30T20:40:09.569Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/fadcb5b4bded7ae484d39914d9ec377213231c8e22152122a329c2ab4e595825 200
+[debug] [2025-11-30T20:40:09.569Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/fadcb5b4bded7ae484d39914d9ec377213231c8e22152122a329c2ab4e595825 [stream]
+[debug] [2025-11-30T20:40:09.571Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/89ed1abdef77c21728c9b6c4184470beaadd0469a468c3fabd46b20a21588a81 200
+[debug] [2025-11-30T20:40:09.572Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/89ed1abdef77c21728c9b6c4184470beaadd0469a468c3fabd46b20a21588a81 [stream]
+[debug] [2025-11-30T20:40:09.586Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4e1d3adad9ce7e17c0d13fac197f1c27091906f4ecf3909c9f51247bff345118 200
+[debug] [2025-11-30T20:40:09.586Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4e1d3adad9ce7e17c0d13fac197f1c27091906f4ecf3909c9f51247bff345118 [stream]
+[debug] [2025-11-30T20:40:09.590Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/391d14b3c2f8c9143a27a28c7399585142228d4d1bdbe2c87ac946de411fa9a2 200
+[debug] [2025-11-30T20:40:09.590Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/391d14b3c2f8c9143a27a28c7399585142228d4d1bdbe2c87ac946de411fa9a2 [stream]
+[debug] [2025-11-30T20:40:09.604Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/ae59fb8487e22d9fcf1d6d516d2e9051147b1b9580367fa627da097d98d750b5 200
+[debug] [2025-11-30T20:40:09.604Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/ae59fb8487e22d9fcf1d6d516d2e9051147b1b9580367fa627da097d98d750b5 [stream]
+[debug] [2025-11-30T20:40:09.605Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/00d0883d9ff9f3a369aca9c19855c92bfb2432153587701bded8ac22e7023f0d 200
+[debug] [2025-11-30T20:40:09.605Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/00d0883d9ff9f3a369aca9c19855c92bfb2432153587701bded8ac22e7023f0d [stream]
+[debug] [2025-11-30T20:40:09.605Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2651566b0e858e00a36a2ac847f736a0434a035ff1975f98936a6ffb207cef9c 200
+[debug] [2025-11-30T20:40:09.605Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2651566b0e858e00a36a2ac847f736a0434a035ff1975f98936a6ffb207cef9c [stream]
+[debug] [2025-11-30T20:40:09.606Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7a40c446864a48dbaa10232d86d8af7829ed2119e1da823e11b1fc4319a1740d 200
+[debug] [2025-11-30T20:40:09.606Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7a40c446864a48dbaa10232d86d8af7829ed2119e1da823e11b1fc4319a1740d [stream]
+[debug] [2025-11-30T20:40:09.636Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2f1eacc4ca48a072a68983c11c769cf932b4b4f58e17dafbfce48fd97be21855 200
+[debug] [2025-11-30T20:40:09.636Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/2f1eacc4ca48a072a68983c11c769cf932b4b4f58e17dafbfce48fd97be21855 [stream]
+[debug] [2025-11-30T20:40:09.689Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7f8e60eda1781f6a9f50c49706f8a721f1d8056667a0635dc952538032e51425 200
+[debug] [2025-11-30T20:40:09.689Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/7f8e60eda1781f6a9f50c49706f8a721f1d8056667a0635dc952538032e51425 [stream]
+[debug] [2025-11-30T20:40:09.711Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f88f4adfda705d00e9215b85771734661dbefd46c844bad776007656f4ff04c3 200
+[debug] [2025-11-30T20:40:09.711Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/f88f4adfda705d00e9215b85771734661dbefd46c844bad776007656f4ff04c3 [stream]
+[debug] [2025-11-30T20:40:09.730Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/0aa54388f2e9a2141f7b708e43fe2e16bb4a09753496c9f2076e89d0a904acfe 200
+[debug] [2025-11-30T20:40:09.730Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/0aa54388f2e9a2141f7b708e43fe2e16bb4a09753496c9f2076e89d0a904acfe [stream]
+[debug] [2025-11-30T20:40:09.821Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/59d0f619600df8ad8447dde087b381122832a01a651d832b7cc572301b165ed1 200
+[debug] [2025-11-30T20:40:09.821Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/59d0f619600df8ad8447dde087b381122832a01a651d832b7cc572301b165ed1 [stream]
+[debug] [2025-11-30T20:40:09.832Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/6d4fd94824d1e882bf61219c09b7c757a117e5acea8e33007836d662bce05306 200
+[debug] [2025-11-30T20:40:09.832Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/6d4fd94824d1e882bf61219c09b7c757a117e5acea8e33007836d662bce05306 [stream]
+[debug] [2025-11-30T20:40:09.959Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/cd979d9d639e70858a8069114a9bf7f8c7f8c4146a5ce6d1de5735cf6347c84c 200
+[debug] [2025-11-30T20:40:09.959Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/cd979d9d639e70858a8069114a9bf7f8c7f8c4146a5ce6d1de5735cf6347c84c [stream]
+[info] i  hosting: uploading new files [20/22] (90%) 
+[debug] [2025-11-30T20:40:10.875Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/51d19d8e83c6e82ea60f6b0ecc388a8c610a278f6b044ecbc1d81e87033d1894 200
+[debug] [2025-11-30T20:40:10.875Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/51d19d8e83c6e82ea60f6b0ecc388a8c610a278f6b044ecbc1d81e87033d1894 [stream]
+[debug] [2025-11-30T20:40:11.697Z] <<< [apiv2][status] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4ecb0e0bd9a6581266603a800f661f482a1fea3a3044f004b2a020ed1fdce886 200
+[debug] [2025-11-30T20:40:11.697Z] <<< [apiv2][body] POST https://upload-firebasehosting.googleapis.com/upload/sites/paylink-f183e/versions/91646a9b15155130/files/4ecb0e0bd9a6581266603a800f661f482a1fea3a3044f004b2a020ed1fdce886 [stream]
+[debug] [2025-11-30T20:40:11.697Z] [hosting][upload queue][FINAL] {"max":4138,"min":1639,"avg":2200.9545454545455,"active":0,"complete":22,"success":22,"errored":0,"retried":0,"total":22,"elapsed":4141}
+[info] i  hosting: upload complete 
+[info] ✔  hosting[paylink-f183e]: file upload complete 
+[debug] [2025-11-30T20:40:11.699Z] [hosting] deploy completed after 5364ms
+[debug] [2025-11-30T20:40:11.699Z] [
+  {
+    "config": {
+      "public": "build",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "site": "paylink-f183e"
+    },
+    "version": "projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130"
+  }
+]
+[info] i  hosting[paylink-f183e]: finalizing version... 
+[debug] [2025-11-30T20:40:11.702Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:11.702Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:11.703Z] >>> [apiv2][query] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions/91646a9b15155130 updateMask=status%2Cconfig
+[debug] [2025-11-30T20:40:11.704Z] >>> [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions/91646a9b15155130 {"status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}]}}
+[debug] [2025-11-30T20:40:12.147Z] <<< [apiv2][status] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions/91646a9b15155130 200
+[debug] [2025-11-30T20:40:12.147Z] <<< [apiv2][body] PATCH https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/versions/91646a9b15155130 {"name":"projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2025-11-30T20:40:05.637565Z","createUser":{"email":"kd1dave123@gmail.com"},"finalizeTime":"2025-11-30T20:40:12.350264Z","finalizeUser":{"email":"kd1dave123@gmail.com"}}
+[debug] [2025-11-30T20:40:12.147Z] [hosting] finalized version for paylink-f183e:[object Object]
+[info] ✔  hosting[paylink-f183e]: version finalized 
+[info] i  hosting[paylink-f183e]: releasing new version... 
+[debug] [2025-11-30T20:40:12.148Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:12.148Z] Checked if tokens are valid: true, expires at: 1764537455758
+[debug] [2025-11-30T20:40:12.149Z] >>> [apiv2][query] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/channels/live/releases versionName=projects%2F1065137322177%2Fsites%2Fpaylink-f183e%2Fversions%2F91646a9b15155130
+[debug] [2025-11-30T20:40:12.149Z] >>> [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/channels/live/releases {}
+[debug] [2025-11-30T20:40:13.348Z] <<< [apiv2][status] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/channels/live/releases 200
+[debug] [2025-11-30T20:40:13.348Z] <<< [apiv2][body] POST https://firebasehosting.googleapis.com/v1beta1/projects/-/sites/paylink-f183e/channels/live/releases {"name":"projects/1065137322177/sites/paylink-f183e/channels/live/releases/1764535212171000","version":{"name":"projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2025-11-30T20:40:05.637565Z","createUser":{"email":"kd1dave123@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocKiYajNsK0gp-174QUqiuRijqtjmeoLHK_z6Bd7m8Ti9tQlgg=mo"},"finalizeTime":"2025-11-30T20:40:12.350264Z","finalizeUser":{"email":"kd1dave123@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocKiYajNsK0gp-174QUqiuRijqtjmeoLHK_z6Bd7m8Ti9tQlgg=mo"}},"type":"DEPLOY","releaseTime":"2025-11-30T20:40:12.171Z","releaseUser":{"email":"kd1dave123@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocKiYajNsK0gp-174QUqiuRijqtjmeoLHK_z6Bd7m8Ti9tQlgg=mo"}}
+[debug] [2025-11-30T20:40:13.349Z] [hosting] release: {"name":"projects/1065137322177/sites/paylink-f183e/channels/live/releases/1764535212171000","version":{"name":"projects/1065137322177/sites/paylink-f183e/versions/91646a9b15155130","status":"FINALIZED","config":{"rewrites":[{"glob":"**","path":"/index.html"}]},"labels":{"deployment-tool":"cli-firebase"},"createTime":"2025-11-30T20:40:05.637565Z","createUser":{"email":"kd1dave123@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocKiYajNsK0gp-174QUqiuRijqtjmeoLHK_z6Bd7m8Ti9tQlgg=mo"},"finalizeTime":"2025-11-30T20:40:12.350264Z","finalizeUser":{"email":"kd1dave123@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocKiYajNsK0gp-174QUqiuRijqtjmeoLHK_z6Bd7m8Ti9tQlgg=mo"}},"type":"DEPLOY","releaseTime":"2025-11-30T20:40:12.171Z","releaseUser":{"email":"kd1dave123@gmail.com","imageUrl":"https://lh3.googleusercontent.com/a/ACg8ocKiYajNsK0gp-174QUqiuRijqtjmeoLHK_z6Bd7m8Ti9tQlgg=mo"}}
+[info] ✔  hosting[paylink-f183e]: release complete 
+[info] 
+[info] ✔  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/paylink-f183e/overview
+[info] Hosting URL: https://paylink-f183e.web.app

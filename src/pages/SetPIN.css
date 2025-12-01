@@ -1,0 +1,176 @@
+.set-pin-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.set-pin-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  width: 100%;
+  padding: 40px;
+}
+
+.set-pin-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.set-pin-header h1 {
+  font-size: 24px;
+  color: #333;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.set-pin-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.error-alert {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  color: #c33;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+}
+
+.form-group input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group small {
+  font-size: 12px;
+  color: #999;
+}
+
+.btn {
+  padding: 12px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #667eea;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #5568d3;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.success-message,
+.error-message {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.success-icon,
+.error-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: bounce 0.6s ease-out;
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.success-message h2 {
+  color: #4caf50;
+  font-size: 20px;
+  margin: 0 0 8px 0;
+}
+
+.error-message h2 {
+  color: #f44336;
+  font-size: 20px;
+  margin: 0 0 8px 0;
+}
+
+.success-message p,
+.error-message p {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 16px 0;
+}
+
+@media (max-width: 480px) {
+  .set-pin-container {
+    padding: 24px;
+  }
+
+  .set-pin-header h1 {
+    font-size: 20px;
+  }
+}

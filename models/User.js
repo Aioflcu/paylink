@@ -43,4 +43,8 @@ const userSchema = new mongoose.Schema({
   }
 });
 
+// Indexes for efficient lookups and to enforce uniqueness at DB level
+userSchema.index({ email: 1 }, { unique: true, background: true });
+userSchema.index({ username: 1 }, { unique: true, background: true });
+
 module.exports = mongoose.model('User', userSchema);

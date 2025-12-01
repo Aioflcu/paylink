@@ -53,4 +53,8 @@ transactionSchema.pre('save', function(next) {
   next();
 });
 
+// Indexes to speed up common queries and ensure reference uniqueness
+transactionSchema.index({ reference: 1 }, { unique: true, background: true });
+transactionSchema.index({ userId: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Transaction', transactionSchema);

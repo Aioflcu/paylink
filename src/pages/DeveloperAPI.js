@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
-import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, limit, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, deleteDoc, doc, serverTimestamp, limit } from 'firebase/firestore';
 import CryptoJS from 'crypto-js';
-import APIUsageService from '../services/apiUsageService';
 import './DeveloperAPI.css';
 
 const DeveloperAPI = () => {
   const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
-  const usageUnsubscribeRef = useRef(null);
   const [apiKeys, setApiKeys] = useState([]);
   const [showKeyForm, setShowKeyForm] = useState(false);
   const [keyName, setKeyName] = useState('');
@@ -20,12 +18,6 @@ const DeveloperAPI = () => {
     requestsThisMonth: 0,
     averageResponseTime: 145,
     successRate: 99.8
-  });
-  const [detailedUsage, setDetailedUsage] = useState({
-    endpointStats: {},
-    methodStats: {},
-    hourlyStats: {},
-    dailyStats: []
   });
 
   const API_LIMITS = {
@@ -74,26 +66,10 @@ const DeveloperAPI = () => {
   ];
 
   useEffect(() => {
-    // Cleanup previous listener
-    if (usageUnsubscribeRef.current) {
-      usageUnsubscribeRef.current();
-      usageUnsubscribeRef.current = null;
-    }
-
     if (currentUser) {
       loadAPIKeys();
-      loadUsage().then(unsubscribe => {
-        usageUnsubscribeRef.current = unsubscribe;
-      });
+      loadUsage();
     }
-
-    // Cleanup function
-    return () => {
-      if (usageUnsubscribeRef.current) {
-        usageUnsubscribeRef.current();
-        usageUnsubscribeRef.current = null;
-      }
-    };
   }, [currentUser]);
 
   const loadAPIKeys = async () => {
@@ -118,81 +94,15 @@ const DeveloperAPI = () => {
 
   const loadUsage = async () => {
     try {
-      if (!currentUser) return;
-
-      // Set up real-time listener for usage statistics
-      const usageRef = collection(db, 'apiUsage');
-      const now = new Date();
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-      const usageQuery = query(
-        usageRef,
-        where('userId', '==', currentUser.uid),
-        where('timestamp', '>=', startOfMonth)
-      );
-
-      // Set up real-time listener
-      const unsubscribe = onSnapshot(usageQuery, (snapshot) => {
-        let totalRequests = 0;
-        let totalResponseTime = 0;
-        let successfulRequests = 0;
-        const endpointStats = {};
-        const methodStats = {};
-        const hourlyStats = {};
-        const dailyStats = {};
-
-        snapshot.forEach(doc => {
-          const data = doc.data();
-          const count = data.requestCount || 1;
-          totalRequests += count;
-          totalResponseTime += (data.responseTime || 0) * count;
-          if (data.success !== false) {
-            successfulRequests += count;
-          }
-
-          // Track endpoint usage
-          if (data.endpoint) {
-            endpointStats[data.endpoint] = (endpointStats[data.endpoint] || 0) + count;
-          }
-
-          // Track method usage
-          if (data.method) {
-            methodStats[data.method] = (methodStats[data.method] || 0) + count;
-          }
-
-          // Track hourly usage
-          if (data.timestamp) {
-            const hour = data.timestamp.toDate().getHours();
-            hourlyStats[hour] = (hourlyStats[hour] || 0) + count;
-          }
-        });
-
-        setUsage({
-          totalRequests,
-          requestsThisMonth: totalRequests,
-          averageResponseTime: totalRequests > 0 ? Math.round(totalResponseTime / totalRequests) : 0,
-          successRate: totalRequests > 0 ? ((successfulRequests / totalRequests) * 100).toFixed(1) : '0.0'
-        });
-
-        setDetailedUsage({
-          endpointStats,
-          methodStats,
-          hourlyStats,
-          dailyStats: Object.entries(dailyStats).map(([date, count]) => ({ date, count }))
-        });
-      });
-
-      // Store unsubscribe function for cleanup
-      return unsubscribe;
-    } catch (error) {
-      console.error('Error setting up usage listener:', error);
-      // Fallback to default values if query fails
+      // Simulated usage data - would come from actual API tracking
       setUsage({
-        totalRequests: 0,
-        requestsThisMonth: 0,
-        averageResponseTime: 145,
-        successRate: '99.8'
+        totalRequests: Math.floor(Math.random() * 100000),
+        requestsThisMonth: Math.floor(Math.random() * 50000),
+        averageResponseTime: Math.floor(Math.random() * 200) + 50,
+        successRate: (98 + Math.random() * 2).toFixed(1)
       });
+    } catch (error) {
+      console.error('Error loading usage:', error);
     }
   };
 
@@ -204,8 +114,8 @@ const DeveloperAPI = () => {
 
     setLoading(true);
     try {
-      const key = generateRandomKey();
-      const keyHash = hashKey(key);
+      const key = this.generateRandomKey();
+      const keyHash = this.hashKey(key);
 
       await addDoc(collection(db, 'apiKeys'), {
         userId: currentUser.uid,
@@ -526,58 +436,6 @@ const DeveloperAPI = () => {
                 <div className="usage-icon">✓</div>
                 <p className="usage-label">Success Rate</p>
                 <p className="usage-value">{usage.successRate}%</p>
-              </div>
-            </div>
-
-            <div className="analytics-section">
-              <h3>Advanced Analytics</h3>
-
-              <div className="analytics-grid">
-                <div className="analytics-card">
-                  <h4>Endpoint Usage</h4>
-                  <div className="endpoint-list">
-                    {Object.entries(detailedUsage.endpointStats)
-                      .sort(([,a], [,b]) => b - a)
-                      .slice(0, 5)
-                      .map(([endpoint, count]) => (
-                        <div key={endpoint} className="endpoint-item">
-                          <span className="endpoint-name">{endpoint}</span>
-                          <span className="endpoint-count">{count} requests</span>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-
-                <div className="analytics-card">
-                  <h4>Method Distribution</h4>
-                  <div className="method-list">
-                    {Object.entries(detailedUsage.methodStats)
-                      .sort(([,a], [,b]) => b - a)
-                      .map(([method, count]) => (
-                        <div key={method} className="method-item">
-                          <span className="method-name">{method}</span>
-                          <span className="method-count">{count} requests</span>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-
-                <div className="analytics-card">
-                  <h4>Hourly Usage Pattern</h4>
-                  <div className="hourly-chart">
-                    {Array.from({ length: 24 }, (_, hour) => (
-                      <div key={hour} className="hour-bar">
-                        <div
-                          className="hour-fill"
-                          style={{
-                            height: `${(detailedUsage.hourlyStats[hour] || 0) / Math.max(...Object.values(detailedUsage.hourlyStats), 1) * 100}%`
-                          }}
-                        ></div>
-                        <span className="hour-label">{hour}:00</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
 

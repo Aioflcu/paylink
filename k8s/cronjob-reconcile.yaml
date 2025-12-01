@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: paylink-reconcile
+  namespace: paylink
+spec:
+  # Run hourly by default. Adjust schedule as needed.
+  schedule: "0 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: reconcile
+              # Replace <IMAGE> with your registry image, e.g. ghcr.io/yourorg/paylink:latest
+              image: "<IMAGE>"
+              imagePullPolicy: IfNotPresent
+              command: ["node", "/app/bin/reconcile.js"]
+              env:
+                - name: NODE_ENV
+                  value: "production"
+                - name: MONGODB_URI
+                  valueFrom:
+                    secretKeyRef:
+                      name: paylink-secrets
+                      key: MONGODB_URI
+                - name: MONNIFY_BASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: paylink-secrets
+                      key: MONNIFY_BASE_URL
+                - name: MONNIFY_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: paylink-secrets
+                      key: MONNIFY_API_KEY
+                - name: MONNIFY_SECRET_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: paylink-secrets
+                      key: MONNIFY_SECRET_KEY
+                - name: PEYFLEX_BASE_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: paylink-secrets
+                      key: PEYFLEX_BASE_URL
+                - name: PEYFLEX_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: paylink-secrets
+                      key: PEYFLEX_API_KEY
+          # Optionally set imagePullSecrets if your registry is private
+          # imagePullSecrets:
+          #   - name: regcred

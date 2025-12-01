@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import payflex from '../services/payflex';
+import { paymentAPI } from '../services/backendAPI';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './CableTV.css';
 
@@ -142,21 +142,70 @@ const CableTV = () => {
     }
   };
 
-  const handleProceedToPin = () => {
+  const handleProceedToPin = async () => {
     const providerObj = getSelectedProviderObject();
     const plan = cablePlans[formData.provider].find((p) => p.id === formData.plan);
 
-    navigate('/pin', {
-      state: {
-        type: 'cabletv',
-        provider: providerObj?.name,
-        plan: plan?.name,
-        smartCard: formData.smartCard,
-        amount: plan?.price,
-        phone: formData.phone,
-        description: `Cable TV: ${providerObj?.name} - ${plan?.name} (${formData.smartCard})`,
-      },
-    });
+    try {
+      setLoading(true);
+      setError('');
+
+      // Call backend payment API
+      const result = await paymentAPI.payCableTV(
+        formData.smartCard,
+        formData.provider,
+        formData.plan,
+        plan?.price
+      );
+
+      if (result.success) {
+        // Navigate to success page
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'cabletv',
+            provider: providerObj?.name,
+            plan: plan?.name,
+            smartCard: formData.smartCard,
+            amount: plan?.price,
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0,
+            description: `Cable TV: ${providerObj?.name} - ${plan?.name} (${formData.smartCard})`
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        navigate('/pin', {
+          state: {
+            type: 'cabletv',
+            provider: providerObj?.name,
+            plan: plan?.name,
+            smartCard: formData.smartCard,
+            amount: plan?.price,
+            phone: formData.phone,
+            description: `Cable TV: ${providerObj?.name} - ${plan?.name} (${formData.smartCard})`,
+            onPinVerified: async (pinHash) => {
+              const pinResult = await paymentAPI.payCableTV(
+                formData.smartCard,
+                formData.provider,
+                formData.plan,
+                plan?.price,
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Payment failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderStep1 = () => (

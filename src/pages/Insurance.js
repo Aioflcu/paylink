@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import walletService from '../services/walletService';
-import payflexService from '../services/payflex';
+import { paymentAPI } from '../services/backendAPI';
 import './Insurance.css';
 
 const Insurance = () => {
@@ -57,30 +56,58 @@ const Insurance = () => {
   };
 
   const handlePurchase = async () => {
-    // TODO: Implement PIN verification and purchase logic
     setLoading(true);
     try {
-      // Placeholder for purchase logic
-      // const result = await payflexService.purchaseInsurance({
-      //   type: selectedType.id,
-      //   plan: selectedPlan.id,
-      //   amount: selectedPlan.amount,
-      //   userId: currentUser.uid
-      // });
+      setError('');
 
-      // Navigate to success page with transaction details
-      navigate('/success', {
-        state: {
-          type: 'insurance',
-          insuranceType: selectedType.name,
-          planName: selectedPlan.name,
-          coverage: selectedPlan.coverage,
-          amount: selectedPlan.amount,
-          reference: 'TXN_' + Date.now() // TODO: Use real reference
-        }
-      });
-    } catch (err) {
-      setError('Purchase failed. Please try again.');
+      // Call backend payment API
+      const result = await paymentAPI.payInsurance(
+        selectedPlan.id,
+        selectedType.id,
+        parseFloat(selectedPlan.amount)
+      );
+
+      if (result.success) {
+        // Navigate to success page
+        navigate('/success', {
+          state: {
+            transactionId: result.transactionId,
+            type: 'insurance',
+            insuranceType: selectedType.name,
+            planName: selectedPlan.name,
+            coverage: selectedPlan.coverage,
+            amount: selectedPlan.amount,
+            fee: result.fee || 0,
+            rewardPoints: result.rewardPoints || 0
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      
+      // Check if PIN is required
+      if (error.status === 403 && error.data?.requiresPin) {
+        setStep(3); // Show PIN entry step
+        navigate('/pin', {
+          state: {
+            type: 'insurance',
+            insuranceType: selectedType.name,
+            planName: selectedPlan.name,
+            amount: selectedPlan.amount,
+            onPinVerified: async (pinHash) => {
+              const pinResult = await paymentAPI.payInsurance(
+                selectedPlan.id,
+                selectedType.id,
+                parseFloat(selectedPlan.amount),
+                pinHash
+              );
+              return pinResult;
+            }
+          }
+        });
+      } else {
+        setError(error.data?.error || error.message || 'Payment failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }

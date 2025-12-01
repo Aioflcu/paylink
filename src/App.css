@@ -15,14 +15,16 @@
   --text-muted: #adb5bd;
   --border-color: #dee2e6;
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --primary-color: #667eea;
-  --primary-hover: #5a67d8;
+  --primary-color: #FF6A00; /* Moniepoint-like orange */
+  --primary-hover: #e65a00;
+  --primary-2: #cc5200; /* darker orange for gradients */
   --success-color: #48bb78;
+  --primary-rgb: 255,106,0; /* RGB for primary color to use with rgba() */
   --warning-color: #ed8936;
   --error-color: #f56565;
   --card-bg: #ffffff;
   --input-bg: #ffffff;
-  --button-primary: #667eea;
+  --button-primary: var(--primary-color);
   --button-secondary: #e2e8f0;
 }
 
@@ -36,14 +38,15 @@
   --text-muted: #a0aec0;
   --border-color: #4a5568;
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  --primary-color: #667eea;
-  --primary-hover: #5a67d8;
+  --primary-color: #FF6A00; /* Moniepoint-like orange */
+  --primary-hover: #e65a00;
+  --primary-2: #cc5200; /* darker orange for gradients */
   --success-color: #48bb78;
   --warning-color: #ed8936;
   --error-color: #f56565;
   --card-bg: #2d3748;
   --input-bg: #4a5568;
-  --button-primary: #667eea;
+  --button-primary: var(--primary-color);
   --button-secondary: #4a5568;
 }
 
@@ -125,7 +128,8 @@ button:disabled {
 .form-group select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  /* subtle glow using primary color */
+  box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.08);
 }
 
 /* Error Messages */

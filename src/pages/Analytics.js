@@ -61,35 +61,28 @@ const Analytics = () => {
       setLoading(true);
       setError('');
 
-      // Get spending analytics for the current month
-      const analyticsData = await analyticsService.getSpendAnalytics(currentUser.uid, 'monthly');
+      const [categoryRes, weeklyRes, monthlyRes, statsRes, topRes, merchantRes] = await Promise.all([
+        analyticsService.getSpendingByCategory(user.uid),
+        analyticsService.getWeeklyTrend(user.uid, 4),
+        analyticsService.getMonthlyBreakdown(user.uid, 6),
+        analyticsService.getSpendingStats(user.uid),
+        analyticsService.getTopCategories(user.uid, 3),
+        analyticsService.getMerchantSpending(user.uid)
+      ]);
 
       // Format category data for pie chart
-      const pieData = analyticsData.categoryBreakdown.map(cat => ({
-        name: cat.category.charAt(0).toUpperCase() + cat.category.slice(1),
-        value: cat.amount,
-        category: cat.category
+      const pieData = Object.entries(categoryRes.byCategory).map(([category, amount]) => ({
+        name: category.charAt(0).toUpperCase() + category.slice(1),
+        value: amount,
+        category
       })).filter(item => item.value > 0);
 
-      // Get weekly trend data
-      const weeklyData = await analyticsService.calculateWeeklyTrend(currentUser.uid, 'monthly');
-
-      // Get monthly trend data (simplified)
-      const monthlyData = await analyticsService.calculateMonthlyTrend(currentUser.uid, 'airtime', 'yearly'); // Using airtime as example
-
       setCategoryData(pieData);
-      setWeeklyTrend(weeklyData || []);
-      setMonthlyTrend(monthlyData || []);
-      setStats({
-        totalSpent: analyticsData.totalSpent,
-        averageTransaction: analyticsData.averageTransaction,
-        minTransaction: 0, // Would need additional query
-        maxTransaction: 0, // Would need additional query
-        totalTransactions: analyticsData.transactionCount,
-        dailyAverage: analyticsData.totalSpent / 30 // Rough estimate
-      });
-      setTopCategories(analyticsData.topCategories || []);
-      setMerchantData([]); // Would need additional implementation
+      setWeeklyTrend(weeklyRes || []);
+      setMonthlyTrend(monthlyRes || []);
+      setStats(statsRes);
+      setTopCategories(topRes || []);
+      setMerchantData(merchantRes || []);
     } catch (err) {
       console.error('Error loading analytics:', err);
       setError('Failed to load analytics. Please try again.');

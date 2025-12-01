@@ -350,11 +350,195 @@ class TransactionProcessor {
   }
 
   /**
+   * Process Internet Payment
+   * Calls actual PayFlex API for internet data purchase
+   */
+  static async processInternetPayment(userId, purchaseData) {
+    try {
+      const { provider, phoneNumber, amount } = purchaseData;
+
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      const walletBalance = userSnap.data()?.walletBalance || 0;
+
+      if (walletBalance < amount) {
+        throw new Error(`Insufficient balance`);
+      }
+
+      // Call PayFlex API to buy internet
+      const payFlexResponse = await fetch(`${this.PAYFLEX_API}/internet/purchase`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.PAYFLEX_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          phone: phoneNumber,
+          provider: provider,
+          amount: amount
+        })
+      });
+
+      if (!payFlexResponse.ok) {
+        const errorData = await payFlexResponse.json();
+        throw new Error(errorData.message || 'PayFlex API failed');
+      }
+
+      const payFlexData = await payFlexResponse.json();
+
+      // Deduct from wallet
+      await updateDoc(userRef, {
+        walletBalance: increment(-amount)
+      });
+
+      // Save transaction to Firestore
+      const txRef = collection(db, 'users', userId, 'transactions');
+      const transaction = await addDoc(txRef, {
+        type: 'internet',
+        provider,
+        phoneNumber,
+        amount,
+        status: 'success',
+        payFlexRef: payFlexData.data?.reference || 'N/A',
+        description: `Internet purchase - ${provider.toUpperCase()} - ₦${amount}`,
+        walletBefore: walletBalance,
+        walletAfter: walletBalance - amount,
+        createdAt: Timestamp.now()
+      });
+
+      // Award reward points (1 point per ₦500)
+      const pointsEarned = Math.floor(amount / 500);
+      await updateDoc(userRef, {
+        rewardPoints: increment(pointsEarned)
+      });
+
+      // Log reward transaction
+      const rewardRef = collection(db, 'users', userId, 'rewardTransactions');
+      await addDoc(rewardRef, {
+        type: 'earned',
+        points: pointsEarned,
+        reason: 'internet purchase',
+        transactionId: transaction.id,
+        amount,
+        createdAt: Timestamp.now()
+      });
+
+      return {
+        success: true,
+        transactionId: transaction.id,
+        reference: payFlexData.data?.reference,
+        amount,
+        pointsEarned,
+        message: `Internet purchase successful. ₦${amount} sent to ${phoneNumber}`
+      };
+
+    } catch (error) {
+      console.error('Error processing internet purchase:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Process Education Payment
+   * Calls actual PayFlex API for education payments
+   */
+  static async processEducationPayment(userId, purchaseData) {
+    try {
+      const { institution, studentName, registrationNumber, amount } = purchaseData;
+
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      const walletBalance = userSnap.data()?.walletBalance || 0;
+
+      if (walletBalance < amount) {
+        throw new Error(`Insufficient balance`);
+      }
+
+      // Call PayFlex API for education payment
+      const payFlexResponse = await fetch(`${this.PAYFLEX_API}/education/payment`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${this.PAYFLEX_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          institution,
+          studentName,
+          registrationNumber,
+          amount
+        })
+      });
+
+      if (!payFlexResponse.ok) {
+        const errorData = await payFlexResponse.json();
+        throw new Error(errorData.message || 'PayFlex API failed');
+      }
+
+      const payFlexData = await payFlexResponse.json();
+
+      // Deduct from wallet
+      await updateDoc(userRef, {
+        walletBalance: increment(-amount)
+      });
+
+      // Save transaction to Firestore
+      const txRef = collection(db, 'users', userId, 'transactions');
+      const transaction = await addDoc(txRef, {
+        type: 'education',
+        institution,
+        studentName,
+        registrationNumber,
+        amount,
+        status: 'success',
+        payFlexRef: payFlexData.data?.reference || 'N/A',
+        description: `Education payment - ${institution} - ₦${amount}`,
+        walletBefore: walletBalance,
+        walletAfter: walletBalance - amount,
+        createdAt: Timestamp.now()
+      });
+
+      // Award reward points (1 point per ₦1,000)
+      const pointsEarned = Math.floor(amount / 1000);
+      await updateDoc(userRef, {
+        rewardPoints: increment(pointsEarned)
+      });
+
+      // Log reward transaction
+      const rewardRef = collection(db, 'users', userId, 'rewardTransactions');
+      await addDoc(rewardRef, {
+        type: 'earned',
+        points: pointsEarned,
+        reason: 'education payment',
+        transactionId: transaction.id,
+        amount,
+        createdAt: Timestamp.now()
+      });
+
+      return {
+        success: true,
+        transactionId: transaction.id,
+        reference: payFlexData.data?.reference,
+        amount,
+        pointsEarned,
+        message: `Education payment successful. ₦${amount} processed for ${studentName}`
+      };
+
+    } catch (error) {
+      console.error('Error processing education payment:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Fund Wallet via Monnify
    * User transfers money into wallet from their bank account
    */
   static async fundWallet(userId, amount) {
     try {
+      // Ensure Monnify is configured before attempting to create payment
+      if (!this.MONNIFY_API || !this.MONNIFY_KEY || !this.MONNIFY_SECRET) {
+        throw new Error('Monnify is not configured for the frontend. Set REACT_APP_MONNIFY_API_URL, REACT_APP_MONNIFY_API_KEY and REACT_APP_MONNIFY_SECRET_KEY.');
+      }
       const userRef = doc(db, 'users', userId);
       const userSnap = await getDoc(userRef);
       const userData = userSnap.data();

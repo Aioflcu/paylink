@@ -1,0 +1,77 @@
+openapi: 3.0.3
+info:
+  title: Paylink API
+  version: 1.0.0
+  description: API documentation for Paylink backend
+servers:
+  - url: http://localhost:5000/api
+paths:
+  /health/liveness:
+    get:
+      summary: Liveness probe
+      responses:
+        '200':
+          description: OK
+  /health/readiness:
+    get:
+      summary: Readiness probe
+      responses:
+        '200':
+          description: Ready
+  /payments/airtime:
+    post:
+      summary: Buy airtime
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  type: string
+                amount:
+                  type: number
+                provider:
+                  type: string
+                pinHash:
+                  type: string
+              required:
+                - phone
+                - amount
+                - provider
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request
+  /wallet/balance:
+    get:
+      summary: Get wallet balance
+      responses:
+        '200':
+          description: Success
+  /wallet/deposit:
+    post:
+      summary: Deposit funds
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                amount:
+                  type: number
+                paymentMethod:
+                  type: string
+                reference:
+                  type: string
+              required:
+                - amount
+                - paymentMethod
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad request

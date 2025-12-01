@@ -6,7 +6,7 @@
 
 .rewards-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -71,7 +71,7 @@
 }
 
 .overview-card.main {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   color: white;
 }
 
@@ -113,7 +113,7 @@
 .tier-badge {
   font-size: 20px;
   font-weight: 700;
-  color: #667eea;
+  color: var(--primary-color);
   margin: 8px 0;
 }
 
@@ -150,7 +150,7 @@
 .benefits-list li {
   padding: 12px;
   background: #f3f4f6;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--primary-color);
   border-radius: 4px;
   color: #1f2937;
   font-size: 14px;
@@ -187,7 +187,7 @@
 
 .tab-btn.active {
   background: white;
-  color: #667eea;
+  color: var(--primary-color);
 }
 
 /* Tab Content */
@@ -242,7 +242,7 @@
   padding: 12px;
   background: #f9fafb;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--primary-color);
 }
 
 .category-info {
@@ -263,7 +263,7 @@
 }
 
 .category-points {
-  color: #667eea;
+  color: var(--primary-color);
   font-weight: 700;
   font-size: 16px;
   margin: 0;
@@ -293,7 +293,7 @@
 }
 
 .earning-item .rate {
-  color: #667eea;
+  color: var(--primary-color);
   font-weight: 700;
   font-size: 14px;
 }
@@ -320,7 +320,7 @@
 .reward-card:hover:not(.unavailable) {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border-color: #667eea;
+  border-color: var(--primary-color);
 }
 
 .reward-card.unavailable {
@@ -378,7 +378,7 @@
 .redeem-btn {
   padding: 12px 16px;
   border: none;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-2) 100%);
   color: white;
   border-radius: 8px;
   cursor: pointer;
@@ -430,7 +430,7 @@
   padding: 12px;
   background: #f9fafb;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid var(--primary-color);
 }
 
 .history-icon {
@@ -636,6 +636,6 @@
 }
 
 .reward-card:focus-within {
-  outline: 2px solid #667eea;
+  outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
