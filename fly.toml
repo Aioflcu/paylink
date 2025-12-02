@@ -1,0 +1,47 @@
+# fly.toml app configuration file generated for paylink-app-morning-dew-8089 on 2025-12-02T09:52:22+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'paylink-app-morning-dew-8089'
+primary_region = 'jnb'
+kill_signal = 'SIGINT'
+kill_timeout = '5s'
+
+[experimental]
+  auto_rollback = true
+
+[build]
+
+[env]
+  PORT = '5000'
+
+[http_service]
+  internal_port = 5000
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[services]]
+  protocol = 'tcp'
+  internal_port = 5000
+
+  [[services.ports]]
+    port = 80
+    handlers = ['http']
+
+  [[services.ports]]
+    port = 443
+    handlers = ['tls', 'http']
+
+  [[services.tcp_checks]]
+    interval = '10s'
+    timeout = '2s'
+    grace_period = '5s'
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

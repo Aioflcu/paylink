@@ -17,6 +17,12 @@ const verifyToken = async (req, res, next) => {
       return res.status(401).json({ error: 'No token provided' });
     }
 
+    // Guard: if Firebase Admin not initialized, fail gracefully
+    if (!admin || !admin.apps || !admin.apps.length) {
+      console.warn('Firebase Admin not initialized; token verification skipped');
+      return res.status(401).json({ error: 'Authentication service unavailable' });
+    }
+
     const decodedToken = await admin.auth().verifyIdToken(token);
     req.user = { uid: decodedToken.uid, ...decodedToken };
 

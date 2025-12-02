@@ -11,11 +11,36 @@ const nodemailer = require('nodemailer');
 // Load environment variables
 dotenv.config();
 
-// Import models
-const User = require('./models/User');
-const Wallet = require('./models/Wallet');
-const Transaction = require('./models/Transaction');
-const Savings = require('./models/Savings');
+// Import models (wrap in try-catch to handle missing model files gracefully)
+let User, Wallet, Transaction, Savings;
+
+try {
+  User = require('./models/User');
+} catch (e) {
+  console.warn('Failed to import User model:', e.message);
+  User = null;
+}
+
+try {
+  Wallet = require('./models/Wallet');
+} catch (e) {
+  console.warn('Failed to import Wallet model:', e.message);
+  Wallet = null;
+}
+
+try {
+  Transaction = require('./models/Transaction');
+} catch (e) {
+  console.warn('Failed to import Transaction model:', e.message);
+  Transaction = null;
+}
+
+try {
+  Savings = require('./models/Savings');
+} catch (e) {
+  console.warn('Failed to import Savings model:', e.message);
+  Savings = null;
+}
 
 const app = express();
 
