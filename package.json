@@ -73,6 +73,6 @@
     "mongodb-memory-server": "^8.11.0",
     "prom-client": "^14.2.0",
     "react-router-dom": "^7.9.6",
-    "supertest": "^6.3.4"
+    "supertest": "^7.1.4"
   }
 }
