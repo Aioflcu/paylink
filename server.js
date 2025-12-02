@@ -690,51 +690,56 @@ module.exports = app;
 // If run directly, start the server
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
-  // Attempt to connect Redis if available (safe no-op if module missing)
-  (async () => {
-    try {
-      const { connectRedis } = require('./backend/utils/redisClient');
-      if (connectRedis) {
-        await connectRedis();
-      }
-    } catch (e) {
-      console.warn('Redis client not initialized at startup:', e.message || e);
+  
+  // Start server immediately without waiting for Redis
+  // Redis is optional and will log errors if unavailable, but won't block startup
+  const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`);
+    
+    // Attempt to connect Redis in the background if configured
+    if (process.env.REDIS_URL || process.env.REDIS_HOST) {
+      (async () => {
+        try {
+          const { connectRedis } = require('./backend/utils/redisClient');
+          if (connectRedis) {
+            await connectRedis();
+          }
+        } catch (e) {
+          console.warn('Redis connection failed (optional):', e.message || e);
+        }
+      })();
     }
+  });
 
-    const server = app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-
-    // Graceful shutdown
-    const shutdown = async (signal) => {
-      console.log(`Received ${signal} - closing server`);
+  // Graceful shutdown
+  const shutdown = async (signal) => {
+    console.log(`Received ${signal} - closing server`);
+    try {
+      server.close(() => console.log('HTTP server closed'));
+      // close mongoose
       try {
-        server.close(() => console.log('HTTP server closed'));
-        // close mongoose
-        try {
-          await mongoose.disconnect();
-          console.log('MongoDB disconnected');
-        } catch (err) {
-          console.warn('Error disconnecting MongoDB:', err.message || err);
-        }
-
-        // close redis if available
-        try {
-          const { disconnectRedis } = require('./backend/utils/redisClient');
-          if (disconnectRedis) await disconnectRedis();
-        } catch (err) {
-          console.warn('Error disconnecting Redis:', err.message || err);
-        }
-
-        // allow process to exit
-        setTimeout(() => process.exit(0), 500);
+        await mongoose.disconnect();
+        console.log('MongoDB disconnected');
       } catch (err) {
-        console.error('Error during shutdown:', err);
-        process.exit(1);
+        console.warn('Error disconnecting MongoDB:', err.message || err);
       }
-    };
 
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('SIGINT', () => shutdown('SIGINT'));
-  })();
+      // close redis if available
+      try {
+        const { disconnectRedis } = require('./backend/utils/redisClient');
+        if (disconnectRedis) await disconnectRedis();
+      } catch (err) {
+        console.warn('Error disconnecting Redis:', err.message || err);
+      }
+
+      // allow process to exit
+      setTimeout(() => process.exit(0), 500);
+    } catch (err) {
+      console.error('Error during shutdown:', err);
+      process.exit(1);
+    }
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
