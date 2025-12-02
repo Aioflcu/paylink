@@ -5,9 +5,50 @@
 
 const admin = require('firebase-admin');
 
+// Fallback noop Firestore implementation used when Firebase Admin
+// is not initialized in the environment (e.g., no service account).
+function createNoopFirestore() {
+  const noopDoc = { exists: false, data: () => ({}), id: null };
+  const makePromise = (value) => Promise.resolve(value);
+
+  const docMethods = {
+    get: () => makePromise(noopDoc),
+    set: () => makePromise(true),
+    update: () => makePromise(true),
+    delete: () => makePromise(true),
+    collection: () => ({ doc: () => docMethods }),
+  };
+
+  const collectionMethods = () => ({
+    doc: () => docMethods,
+    get: async () => ({ forEach: () => {} }),
+    where: () => ({ get: async () => ({ forEach: () => {} }) }),
+    orderBy: () => ({ limit: () => ({ get: async () => ({ forEach: () => {} }) }) }),
+  });
+
+  return {
+    collection: () => collectionMethods(),
+    FieldValue: { serverTimestamp: () => new Date() },
+  };
+}
+
 class UserModel {
   constructor() {
-    this.db = admin.firestore();
+    try {
+      // If Firebase Admin hasn't been initialized (no service account), this may throw
+      // or admin.apps may be empty. Guard against that and fall back to a noop DB so
+      // the app can start in environments without Firebase credentials.
+      if (admin && admin.apps && admin.apps.length) {
+        this.db = admin.firestore();
+      } else {
+        this.db = createNoopFirestore();
+        console.warn('Firebase Admin not initialized: using noop Firestore implementation');
+      }
+    } catch (err) {
+      console.warn('Error initializing Firestore, falling back to noop implementation:', err && err.message);
+      this.db = createNoopFirestore();
+    }
+
     this.usersCollection = 'users';
     this.devicesCollection = 'devices';
     this.loginHistoryCollection = 'loginHistory';
