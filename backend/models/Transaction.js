@@ -5,9 +5,45 @@
 
 const admin = require('firebase-admin');
 
+function createNoopFirestore() {
+  const noopDoc = { exists: false, data: () => ({}), id: null };
+  const makePromise = (value) => Promise.resolve(value);
+
+  const docMethods = {
+    get: () => makePromise(noopDoc),
+    set: () => makePromise(true),
+    update: () => makePromise(true),
+    delete: () => makePromise(true),
+    collection: () => ({ doc: () => docMethods }),
+  };
+
+  const collectionMethods = () => ({
+    doc: () => docMethods,
+    get: async () => ({ forEach: () => {} }),
+    where: () => ({ get: async () => ({ forEach: () => {} }) }),
+    orderBy: () => ({ limit: () => ({ get: async () => ({ forEach: () => {} }) }) }),
+  });
+
+  return {
+    collection: () => collectionMethods(),
+    FieldValue: { serverTimestamp: () => new Date() },
+  };
+}
+
 class TransactionModel {
   constructor() {
-    this.db = admin.firestore();
+    try {
+      if (admin && admin.apps && admin.apps.length) {
+        this.db = admin.firestore();
+      } else {
+        this.db = createNoopFirestore();
+        console.warn('Firebase Admin not initialized: using noop Firestore implementation (TransactionModel)');
+      }
+    } catch (err) {
+      console.warn('Error initializing Firestore in TransactionModel, falling back to noop implementation:', err && err.message);
+      this.db = createNoopFirestore();
+    }
+
     this.transactionsCollection = 'transactions';
   }
 
